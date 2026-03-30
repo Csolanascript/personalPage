@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-azure:      #0078d4;
+  --color-surface:    #0a0a0a;
+  --color-surface-2:  #111111;
+  --color-surface-3:  #1a1a1a;
+  --color-border:     #1f1f1f;
+  --color-muted:      #6b7280;
+  --color-text:       #f0f4f8;
+
+  --space-xs:  0.25rem;
+  --space-sm:  0.5rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+
+  --shadow-azure: 0 0 0 1px rgba(0,120,212,0.12), 0 4px 20px rgba(0,120,212,0.10);
+  --shadow-azure-lg: 0 0 0 1px rgba(0,120,212,0.25), 0 8px 40px rgba(0,120,212,0.18);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #000000;
+  color: #f0f4f8;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  line-height: 1.6;
+  min-height: 100dvh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb {
+  background: #0078d430;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: #0078d460; }
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Selection */
+::selection {
+  background: rgba(0, 120, 212, 0.3);
+  color: #fff;
+}
+
+@layer utilities {
+  .font-heading { font-family: 'Lexend', sans-serif; }
+  .font-body    { font-family: 'Source Sans 3', sans-serif; }
+
+  .text-azure   { color: #0078d4; }
+  .bg-azure     { background-color: #0078d4; }
+
+  .border-azure-subtle { border-color: rgba(0,120,212,0.15); }
+  .border-azure-mid    { border-color: rgba(0,120,212,0.30); }
+
+  .bg-surface   { background-color: #0a0a0a; }
+  .bg-surface-2 { background-color: #111111; }
+  .bg-surface-3 { background-color: #1a1a1a; }
+
+  /* Bento card base */
+  .bento-card {
+    background: #0a0a0a;
+    border: 1px solid #1f1f1f;
+    border-radius: 20px;
+    transition: border-color 250ms ease, box-shadow 250ms ease, transform 250ms ease;
+    cursor: default;
+    overflow: hidden;
+  }
+  .bento-card:hover {
+    border-color: rgba(0,120,212,0.30);
+    box-shadow: 0 0 0 1px rgba(0,120,212,0.12), 0 8px 40px rgba(0,120,212,0.12);
+  }
+
+  /* Azure gradient line accent */
+  .azure-line {
+    height: 2px;
+    background: linear-gradient(90deg, #0078d4 0%, transparent 100%);
+    border-radius: 1px;
+  }
+
+  /* Glow dot */
+  .glow-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #0078d4;
+    box-shadow: 0 0 8px 2px rgba(0,120,212,0.5);
+    animation: pulseDot 2s ease-in-out infinite;
+  }
+
+  /* Tag chip */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: rgba(0,120,212,0.10);
+    color: #0078d4;
+    border: 1px solid rgba(0,120,212,0.20);
+  }
+}
+
+/* Stagger animation delays */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+.delay-700 { animation-delay: 700ms; }
+.delay-800 { animation-delay: 800ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
