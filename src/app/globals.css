@@ -1,27 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --color-azure:      #0078d4;
-  --color-surface:    #0a0a0a;
-  --color-surface-2:  #111111;
-  --color-surface-3:  #1a1a1a;
-  --color-border:     #1f1f1f;
-  --color-muted:      #6b7280;
-  --color-text:       #f0f4f8;
-
-  --space-xs:  0.25rem;
-  --space-sm:  0.5rem;
-  --space-md:  1rem;
-  --space-lg:  1.5rem;
-  --space-xl:  2rem;
-  --space-2xl: 3rem;
-  --space-3xl: 4rem;
-
-  --shadow-azure: 0 0 0 1px rgba(0,120,212,0.12), 0 4px 20px rgba(0,120,212,0.10);
-  --shadow-azure-lg: 0 0 0 1px rgba(0,120,212,0.25), 0 8px 40px rgba(0,120,212,0.18);
+  --color-brand:      #ff0033; /* Wodniack Red */
+  --color-bg:         #000000;
+  --color-fg:         #ffffff;
+  --color-border:     #333333;
 }
 
 *,
@@ -33,252 +20,81 @@
 }
 
 html {
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: auto; /* Handled by Lenis */
 }
 
 body {
-  background-color: #000000;
-  color: #f0f4f8;
-  font-family: 'Source Sans 3', system-ui, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  font-family: 'Space Grotesk', sans-serif;
   line-height: 1.6;
-  min-height: 100dvh;
+  overflow-x: hidden;
 }
 
 /* Custom scrollbar */
-::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: #000; }
 ::-webkit-scrollbar-thumb {
-  background: #0078d430;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover { background: #0078d460; }
-
-/* Focus ring */
-:focus-visible {
-  outline: 2px solid #0078d4;
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-/* Selection */
-::selection {
-  background: rgba(0, 120, 212, 0.3);
-  color: #fff;
+  background: var(--color-brand);
+  border-radius: 2px;
 }
 
 @layer utilities {
-  .font-heading { font-family: 'Lexend', sans-serif; }
-  .font-body    { font-family: 'Source Sans 3', sans-serif; }
+  .font-syne { font-family: 'Syne', sans-serif; }
+  .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 
-  .text-azure   { color: #0078d4; }
-  .bg-azure     { background-color: #0078d4; }
+  .text-brand { color: var(--color-brand); }
+  .bg-brand   { background-color: var(--color-brand); }
+  .border-brand { border-color: var(--color-brand); }
 
-  .border-azure-subtle { border-color: rgba(0,120,212,0.15); }
-  .border-azure-mid    { border-color: rgba(0,120,212,0.30); }
-
-  .bg-surface   { background-color: #0a0a0a; }
-  .bg-surface-2 { background-color: #111111; }
-  .bg-surface-3 { background-color: #1a1a1a; }
-
-  /* ── Bento card base ───────────────────────────────────────────────── */
-  .bento-card {
-    background: #0a0a0a;
-    border: 1px solid #1f1f1f;
-    border-radius: 20px;
-    transition: border-color 300ms ease, box-shadow 300ms ease;
-    cursor: default;
-    overflow: hidden;
-    /* Initial state for GSAP reveal */
-    will-change: transform, opacity;
+  /* ── Headlines ─────────────────────────────────────────────────── */
+  .headline-huge {
+    @apply font-syne font-extrabold uppercase leading-[0.85] tracking-tight;
+    font-size: clamp(4rem, 15vw, 12rem);
   }
 
-  .bento-card:hover {
-    border-color: rgba(0,120,212,0.35);
-    box-shadow:
-      0 0 0 1px rgba(0,120,212,0.14),
-      0 8px 40px rgba(0,120,212,0.14);
+  .headline-reveal {
+    @apply block overflow-hidden;
   }
 
-  /* ── Magnetic card — tracks cursor glow ────────────────────────────── */
-  .magnetic-card {
-    transform-style: preserve-3d;
-    /* CSS custom props used by GSAP to position the glow */
-    --glow-x: 50%;
-    --glow-y: 50%;
+  /* ── Industrial Grid ───────────────────────────────────────────── */
+  .grid-border {
+    @apply border border-white/10;
   }
 
-  /* The radial glow element rendered inside each card */
-  .magnetic-glow {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    /* Radial highlight that follows --glow-x / --glow-y */
-    background: radial-gradient(
-      280px circle at var(--glow-x) var(--glow-y),
-      rgba(0, 120, 212, 0.11) 0%,
-      rgba(0, 120, 212, 0.04) 40%,
-      transparent 70%
-    );
-    border-radius: inherit;
-    transition: opacity 0.4s ease;
+  .grid-border-heavy {
+    @apply border-2 border-white/20;
   }
 
-  /* Border shimmer on hover — separate from the glow layer */
-  .magnetic-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    border: 1px solid transparent;
-    background: radial-gradient(
-      300px circle at var(--glow-x) var(--glow-y),
-      rgba(0, 120, 212, 0.4) 0%,
-      transparent 70%
-    ) border-box;
-    -webkit-mask:
-      linear-gradient(#fff 0 0) padding-box,
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: destination-out;
-    mask:
-      linear-gradient(#fff 0 0) padding-box,
-      linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 1;
+  /* ── Technical Labels ──────────────────────────────────────────── */
+  .tech-label {
+    @apply font-mono text-[9px] uppercase tracking-widest opacity-50 px-2 py-1;
   }
 
-  .magnetic-card:hover::after {
-    opacity: 1;
-  }
-
-  /* Ensure card content sits above the glow layers */
-  .magnetic-card > *:not(.magnetic-glow) {
-    position: relative;
-    z-index: 2;
-  }
-
-  /* Azure gradient line accent */
-  .azure-line {
-    height: 2px;
-    background: linear-gradient(90deg, #0078d4 0%, transparent 100%);
-    border-radius: 1px;
-  }
-
-  /* Glow dot */
-  .glow-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #0078d4;
-    box-shadow: 0 0 8px 2px rgba(0,120,212,0.5);
-    animation: pulseDot 2s ease-in-out infinite;
-    flex-shrink: 0;
-  }
-
-  /* Tag chip */
-  .tag {
-    display: inline-flex;
-    align-items: center;
-    padding: 2px 10px;
-    border-radius: 9999px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    background: rgba(0,120,212,0.10);
-    color: #0078d4;
-    border: 1px solid rgba(0,120,212,0.20);
-  }
-
-  /* Skill bar fill — GSAP animates scaleX from 0 */
-  .skill-bar-fill {
-    transition: box-shadow 250ms ease;
-  }
-
-  /* Reveal cards start invisible — GSAP handles entrance */
-  .reveal-card {
-    opacity: 0;
-  }
-
-  /* ── Scroll Indicator ──────────────────────────────────────────────── */
-  .scroll-indicator {
-    position: absolute;
-    bottom: -4rem;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    color: #0078d4;
-    opacity: 0.6;
-    animation: bounce 2s infinite;
-    pointer-events: none;
-    z-index: 20;
-  }
-
-  .scroll-mouse {
-    width: 20px;
-    height: 32px;
-    border: 2px solid currentColor;
-    border-radius: 12px;
-    position: relative;
-  }
-
-  .scroll-wheel {
-    width: 2px;
-    height: 6px;
-    background: currentColor;
-    position: absolute;
-    top: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 1px;
-    animation: scrollWheel 1.5s infinite;
-  }
-
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
-    40% { transform: translate(-50%, -10px); }
-    60% { transform: translate(-50%, -5px); }
-  }
-
-  @keyframes scrollWheel {
-    0% { opacity: 1; transform: translate(-50%, 0); }
-    100% { opacity: 0; transform: translate(-50%, 15px); }
+  /* ── Horizontal Scroll Utilities ───────────────────────────────── */
+  .horizontal-container {
+    @apply flex flex-nowrap gap-10 items-stretch;
+    width: max-content;
   }
 }
 
-/* ── Keyframes ─────────────────────────────────────────────────────────────── */
-@keyframes pulseDot {
-  0%, 100% { opacity: 1; box-shadow: 0 0 8px 2px rgba(0,120,212,0.5); }
-  50%       { opacity: 0.6; box-shadow: 0 0 14px 4px rgba(0,120,212,0.3); }
+/* ── Lenis Fixes ──────────────────────────────────────────────────────────── */
+html.lenis {
+  height: auto;
 }
 
-/* Stagger animation delays (kept for any CSS-only fallbacks) */
-.delay-100 { animation-delay: 100ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
-.delay-400 { animation-delay: 400ms; }
-.delay-500 { animation-delay: 500ms; }
-.delay-600 { animation-delay: 600ms; }
-.delay-700 { animation-delay: 700ms; }
-.delay-800 { animation-delay: 800ms; }
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
 
-/* ── Accessibility ──────────────────────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-  /* Ensure reveal cards are visible even without animation */
-  .reveal-card {
-    opacity: 1 !important;
-    transform: none !important;
-  }
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }

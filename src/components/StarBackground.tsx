@@ -10,17 +10,19 @@ interface Star {
   vx: number; // Constant velocity x
   vy: number; // Constant velocity y
   z: number; // depth factor (smaller z = more distant)
-  spriteId: number; // 0: White Sm, 1: White Med, 2: Blue Med, 3: White Lg, 4: Blue Lg
+  spriteId: number; // 0: Red Sm, 1: Red Med, 2: Deep Red Med, 3: Red Lg, 4: Deep Red Lg
   pulsePhase: number;
   pulseSpeed: number;
 }
 
+const WODNIACK_RED = "#ff0033";
+
 const STAR_TYPES = [
-  { color: "#ffffff", size: 0.8, glowRange: 6, shadowColor: "rgba(255,255,255,0.4)" }, // 0: White Sm
-  { color: "#ffffff", size: 1.4, glowRange: 10, shadowColor: "rgba(255,255,255,0.5)" }, // 1: White Med
-  { color: "#0078d4", size: 1.2, glowRange: 12, shadowColor: "#0078d4" },             // 2: Blue Med
-  { color: "#ffffff", size: 2.2, glowRange: 16, shadowColor: "rgba(255,255,255,0.6)" }, // 3: White Lg
-  { color: "#0078d4", size: 1.8, glowRange: 18, shadowColor: "#0078d4" },             // 4: Blue Lg
+  { color: "#ffffff", size: 0.6, glowRange: 4, shadowColor: "rgba(255,255,255,0.2)" }, // 0: White Tiny
+  { color: WODNIACK_RED, size: 1.2, glowRange: 10, shadowColor: WODNIACK_RED },         // 1: Red Med
+  { color: "#99001f", size: 1.0, glowRange: 8,  shadowColor: "rgba(153,0,31,0.6)" },    // 2: Deep Red Med
+  { color: WODNIACK_RED, size: 2.0, glowRange: 16, shadowColor: WODNIACK_RED },         // 3: Red Lg
+  { color: "#ffffff", size: 0.9, glowRange: 6, shadowColor: "rgba(255,255,255,0.4)" },  // 4: White Med
 ];
 
 export default function StarBackground() {
@@ -33,7 +35,7 @@ export default function StarBackground() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d", { alpha: false }); // Optimization: no alpha on main canvas if not needed (actually we need alpha for transparent stars, but we can clear with black)
+    const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
     let animationFrameId: number;
@@ -41,7 +43,7 @@ export default function StarBackground() {
 
     const createSprites = () => {
       const sCanvas = document.createElement("canvas");
-      sCanvas.width = 300; // Enough space for all sprites
+      sCanvas.width = 400; // More space for varied sprites
       sCanvas.height = 100;
       const sCtx = sCanvas.getContext("2d");
       if (!sCtx) return;
@@ -51,7 +53,6 @@ export default function StarBackground() {
         const padding = type.glowRange + 5;
         const size = (type.size * 2) + (padding * 2);
 
-        // Pre-render star with glow
         sCtx.save();
         sCtx.beginPath();
         sCtx.arc(currentX + padding + type.size, 50, type.size, 0, Math.PI * 2);
@@ -74,29 +75,30 @@ export default function StarBackground() {
     };
 
     const initStars = () => {
-      // MASSIVE VOLUME (2000 divisor) - now performant with sprites!
-      const starCount = Math.floor((canvas.width * canvas.height) / 2000);
+      // MASSIVE RED DENSITY
+      const starCount = Math.floor((canvas.width * canvas.height) / 1800);
       const stars: Star[] = [];
       for (let i = 0; i < starCount; i++) {
         const x = Math.random() * canvas.width;
         const y = Math.random() * canvas.height;
         const z = Math.random() * 0.8 + 0.2; // depth
         
-        // Pick a sprite based on depth and randomness
-        let spriteId = 0; // default White Sm
-        if (Math.random() > 0.8) {
-           spriteId = Math.random() > 0.6 ? 4 : 2; // Blue
-        } else {
-           spriteId = Math.random() > 0.7 ? 3 : (Math.random() > 0.4 ? 1 : 0); // White sizes
-        }
+        // Distribution focusing heavily on RED
+        let spriteId = 0;
+        const rand = Math.random();
+        if (rand < 0.1) spriteId = 0; // White Tiny
+        else if (rand < 0.2) spriteId = 4; // White Med
+        else if (rand < 0.6) spriteId = 1; // Red Med
+        else if (rand < 0.8) spriteId = 2; // Deep Red
+        else spriteId = 3; // Red Lg
 
         stars.push({
           x,
           y,
           bx: x,
           by: y,
-          vx: (Math.random() - 0.5) * 0.08, 
-          vy: (Math.random() - 0.5) * 0.08,
+          vx: (Math.random() - 0.5) * 0.05, 
+          vy: (Math.random() - 0.5) * 0.05,
           z,
           spriteId,
           pulsePhase: Math.random() * Math.PI * 2,
@@ -107,8 +109,7 @@ export default function StarBackground() {
     };
 
     const draw = () => {
-      // Clear with solid black for performance boost (ctx will skip alpha compositing)
-      ctx.fillStyle = "#000000";
+      ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const stars = starsRef.current;
@@ -119,7 +120,7 @@ export default function StarBackground() {
       if (!spriteCanvas) return;
 
       stars.forEach((star) => {
-        // 1. Drift
+        // Drift
         star.bx += star.vx;
         star.by += star.vy;
         if (star.bx < 0) star.bx = w;
@@ -127,15 +128,13 @@ export default function StarBackground() {
         if (star.by < 0) star.by = h;
         if (star.by > h) star.by = 0;
 
-        // 2. Base Pulse
         star.pulsePhase += star.pulseSpeed;
         const pulse = 0.85 + 0.15 * Math.sin(star.pulsePhase);
 
-        // 3. Mouse Interaction (Repulsion + Proximity Illumination)
         const dx = mx - star.bx;
         const dy = my - star.by;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        const radius = 350; // Large flashlight radius
+        const radius = 350;
 
         let targetX = star.bx;
         let targetY = star.by;
@@ -143,7 +142,7 @@ export default function StarBackground() {
 
         if (distance < radius) {
           const factor = (radius - distance) / radius;
-          const repulsionForce = factor * 80 * star.z;
+          const repulsionForce = factor * 70 * star.z;
           const angle = Math.atan2(dy, dx);
           
           targetX = star.bx - Math.cos(angle) * repulsionForce;
@@ -151,18 +150,15 @@ export default function StarBackground() {
           proximityFactor = factor;
         }
 
-        // smooth transition to target position
         star.x += (targetX - star.x) * 0.1;
         star.y += (targetY - star.y) * 0.1;
 
-        // 4. Render using Sprite
         const sprite = sprites[star.spriteId];
-        const displayW = sprite.w * pulse * (1 + proximityFactor * 1.2);
-        const displayH = sprite.h * pulse * (1 + proximityFactor * 1.2);
+        const displayW = sprite.w * pulse * (1 + proximityFactor * 1.5);
+        const displayH = sprite.h * pulse * (1 + proximityFactor * 1.5);
         
-        ctx.globalAlpha = Math.min(1, (0.5 + proximityFactor) * pulse);
+        ctx.globalAlpha = Math.min(1, (0.4 + proximityFactor * 0.6) * pulse);
         
-        // Fast drawImage call
         ctx.drawImage(
           spriteCanvas,
           sprite.x, sprite.y, sprite.w, sprite.h,
@@ -202,7 +198,7 @@ export default function StarBackground() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ background: "#000000" }}
+      style={{ background: "#000" }}
     />
   );
 }
