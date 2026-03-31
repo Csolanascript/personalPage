@@ -367,7 +367,7 @@ export default function Home() {
   );
 
   return (
-    <div ref={containerRef} className="relative min-h-screen bg-black font-body">
+    <div ref={containerRef} className="relative min-h-screen font-body selection:bg-azure/30">
       <StarBackground />
 
       {/* ── NAV ─────────────────────────────────────────────────────────── */}
@@ -406,7 +406,7 @@ export default function Home() {
         </a>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20">
+      <main className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20">
 
         {/* ═══ HERO ═══════════════════════════════════════════════════════ */}
         <section id="hero" aria-label="Introduction" className="mb-24 sm:mb-28 lg:mb-32">
