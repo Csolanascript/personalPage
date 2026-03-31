@@ -94,7 +94,7 @@ export default function HorizontalWork() {
   }, { scope: sectionRef });
 
   return (
-    <section ref={sectionRef} className="lg:h-screen w-full flex items-center overflow-hidden bg-black lg:border-y border-white/10 relative py-20 lg:py-0">
+    <section ref={sectionRef} className="lg:h-screen w-full flex items-center overflow-visible lg:overflow-hidden bg-black lg:border-y border-white/10 relative py-20 lg:py-0">
       {/* Decorative vertical lines (Desktop only) */}
       <div className="absolute inset-0 flex justify-between pointer-events-none opacity-5 hidden lg:flex">
         {[...Array(10)].map((_, i) => (
@@ -102,7 +102,7 @@ export default function HorizontalWork() {
         ))}
       </div>
 
-      <div ref={containerRef} className="flex flex-col lg:flex-row lg:flex-nowrap gap-10 items-stretch px-[5vw] lg:px-[10vw]">
+      <div ref={containerRef} className="flex flex-col lg:flex-row lg:flex-nowrap gap-10 items-stretch px-[5vw] lg:px-[10vw] w-full lg:w-auto">
         {/* Intro Slide */}
         <div className="flex-shrink-0 lg:w-[50vw] flex flex-col justify-center mb-10 lg:mb-0">
             <span className="tech-label">SELECTED WORKS // 01</span>
@@ -113,7 +113,7 @@ export default function HorizontalWork() {
         {PROJECTS.map((project, index) => (
           <div 
             key={project.id} 
-            className="project-card flex-shrink-0 w-full lg:w-[40vw] lg:h-[60vh] grid-border-heavy p-8 flex flex-col justify-between group transition-colors duration-500 hover:bg-[#ff0033]/5 relative overflow-hidden"
+            className="project-card flex-shrink-0 w-full lg:w-[40vw] lg:h-[60vh] grid-border-heavy p-8 flex flex-col justify-between group transition-colors duration-500 hover:bg-[#ff0033]/5 relative lg:overflow-hidden"
           >
             {/* Background ID number (Desktop) */}
             <div className="absolute -right-10 -bottom-10 opacity-[0.03] font-syne text-[15rem] lg:text-[20rem] font-black select-none pointer-events-none transition-opacity duration-500 group-hover:opacity-[0.08] hidden sm:block">
