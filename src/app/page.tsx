@@ -29,6 +29,13 @@ import {
   Trophy,
   Zap,
 } from "lucide-react";
+import { useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+
+// Register plugins once at module level (safe for SSR guard inside useGSAP)
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Types
@@ -43,32 +50,32 @@ interface Skill {
    Data
 ───────────────────────────────────────────────────────────────────────────── */
 const SKILLS: Skill[] = [
-  { name: "Microsoft Azure",         level: 82, category: "cloud" },
-  { name: "Terraform",               level: 72, category: "cloud" },
-  { name: "Azure VMs / Blob / ERP",  level: 76, category: "cloud" },
-  { name: "Incident Response / IOCs",level: 78, category: "blue" },
-  { name: "OSINT & Threat Intel",    level: 75, category: "blue" },
-  { name: "SIEM / Graylog / XSIAM",  level: 70, category: "blue" },
-  { name: "Docker & Kubernetes",     level: 76, category: "infra" },
-  { name: "Linux Administration",    level: 80, category: "infra" },
-  { name: "Networking / TCP/IP",     level: 74, category: "infra" },
-  { name: "Python",                  level: 78, category: "dev" },
+  { name: "Microsoft Azure", level: 82, category: "cloud" },
+  { name: "Terraform", level: 72, category: "cloud" },
+  { name: "Azure VMs / Blob / ERP", level: 76, category: "cloud" },
+  { name: "Incident Response / IOCs", level: 78, category: "blue" },
+  { name: "OSINT & Threat Intel", level: 75, category: "blue" },
+  { name: "SIEM / Graylog / XSIAM", level: 70, category: "blue" },
+  { name: "Docker & Kubernetes", level: 76, category: "infra" },
+  { name: "Linux Administration", level: 80, category: "infra" },
+  { name: "Networking / TCP/IP", level: 74, category: "infra" },
+  { name: "Python", level: 78, category: "dev" },
   { name: "TypeScript / JavaScript", level: 75, category: "dev" },
-  { name: "Go / Java / C++",         level: 68, category: "dev" },
+  { name: "Go / Java / C++", level: 68, category: "dev" },
 ];
 
 const categoryColor: Record<Skill["category"], string> = {
   cloud: "#0078d4",
-  blue:  "#059669",
+  blue: "#059669",
   infra: "#7c3aed",
-  dev:   "#d97706",
+  dev: "#d97706",
 };
 
 const categoryLabel: Record<Skill["category"], string> = {
   cloud: "Cloud / Azure",
-  blue:  "Blue Team / SOC",
+  blue: "Blue Team / SOC",
   infra: "Infra / DevOps",
-  dev:   "Development",
+  dev: "Development",
 };
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -91,7 +98,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 function SkillBar({ skill }: { skill: Skill }) {
   const color = categoryColor[skill.category];
   return (
-    <div className="group">
+    <div className="group skill-bar-item">
       <div className="flex items-center justify-between mb-1.5">
         <span className="text-sm font-body text-[#d1d5db] group-hover:text-white transition-colors duration-200">
           {skill.name}
@@ -102,11 +109,12 @@ function SkillBar({ skill }: { skill: Skill }) {
       </div>
       <div className="h-[3px] w-full rounded-full bg-[#1f1f1f] overflow-hidden">
         <div
-          className="h-full rounded-full transition-all duration-700 ease-out"
+          className="skill-bar-fill h-full rounded-full"
           style={{
             width: `${skill.level}%`,
             backgroundColor: color,
             boxShadow: `0 0 6px ${color}60`,
+            transformOrigin: "left center",
           }}
         />
       </div>
@@ -119,16 +127,251 @@ function TechTag({ children }: { children: React.ReactNode }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   Magnetic Bento Card — wraps any bento-card with cursor-following glow
+───────────────────────────────────────────────────────────────────────────── */
+function MagneticCard({
+  children,
+  className = "",
+  style = {},
+  id,
+  "aria-label": ariaLabel,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+  id?: string;
+  "aria-label"?: string;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+
+  const { contextSafe } = useGSAP({ scope: cardRef });
+
+  const handleMouseMove = contextSafe((e: React.MouseEvent<HTMLDivElement>) => {
+    const card = cardRef.current;
+    const glow = glowRef.current;
+    if (!card || !glow) return;
+
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Set CSS vars on the CARD element — both .magnetic-glow and ::after inherit them
+    gsap.set(card, {
+      "--glow-x": `${x}px`,
+      "--glow-y": `${y}px`,
+    });
+
+    // Fade in the glow layer
+    gsap.to(glow, {
+      opacity: 1,
+      duration: 0.35,
+      ease: "power2.out",
+    });
+
+    // Very subtle magnetic tilt — professional, not distracting
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -2;
+    const rotateY = ((x - centerX) / centerX) * 2;
+
+    gsap.to(card, {
+      rotateX,
+      rotateY,
+      transformPerspective: 800,
+      duration: 0.5,
+      ease: "power2.out",
+    });
+  });
+
+  const handleMouseLeave = contextSafe(() => {
+    const card = cardRef.current;
+    const glow = glowRef.current;
+    if (!card || !glow) return;
+
+    // Fade out glow then reset card transform
+    gsap.to(glow, { opacity: 0, duration: 0.5, ease: "power2.out" });
+    gsap.to(card, {
+      rotateX: 0,
+      rotateY: 0,
+      duration: 0.7,
+      ease: "power3.out",
+    });
+  });
+
+  return (
+    <div
+      ref={cardRef}
+      id={id}
+      aria-label={ariaLabel}
+      className={`bento-card magnetic-card ${className}`}
+      style={{ ...style, position: "relative", overflow: "hidden" }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Magnetic glow layer */}
+      <div
+        ref={glowRef}
+        className="magnetic-glow"
+        aria-hidden="true"
+        style={{ opacity: 0 }}
+      />
+      {children}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    Main Page
 ───────────────────────────────────────────────────────────────────────────── */
 export default function Home() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      /* ── 1. HERO entrance ───────────────────────────────────────────── */
+      const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      heroTl
+        .from(".hero-card", {
+          y: 60,
+          opacity: 0,
+          duration: 1,
+        })
+        .from(
+          ".hero-avatar",
+          { scale: 0.8, opacity: 0, duration: 0.6 },
+          "-=0.6"
+        )
+        .from(
+          ".hero-title",
+          { y: 20, opacity: 0, duration: 0.6 },
+          "-=0.4"
+        )
+        .from(
+          ".hero-subtitle",
+          { y: 16, opacity: 0, duration: 0.5 },
+          "-=0.35"
+        )
+        .from(
+          ".hero-body",
+          { y: 12, opacity: 0, duration: 0.5 },
+          "-=0.3"
+        )
+        .from(
+          ".hero-cta",
+          { y: 10, opacity: 0, stagger: 0.1, duration: 0.45 },
+          "-=0.25"
+        )
+        .from(
+          ".hero-stats",
+          { x: 20, opacity: 0, stagger: 0.1, duration: 0.5 },
+          "-=0.4"
+        );
+
+      /* ── 2. Nav fade-in ─────────────────────────────────────────────── */
+      gsap.from("nav", {
+        y: -20,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power2.out",
+        delay: 0.2,
+      });
+
+      /* ── 3. Bento cards reveal on scroll — staggered batch ──────────── */
+      ScrollTrigger.batch(".reveal-card", {
+        onEnter: (elements) => {
+          gsap.fromTo(
+            elements,
+            { y: 50, opacity: 0, scale: 0.97 },
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              duration: 0.75,
+              stagger: 0.12,
+              ease: "power3.out",
+              clearProps: "transform",
+            }
+          );
+        },
+        onLeaveBack: (elements) => {
+          gsap.to(elements, { y: 20, opacity: 0, duration: 0.4, stagger: 0.06 });
+        },
+        start: "top 88%",
+        once: false,
+      });
+
+      /* ── 4. Skill bars animate width on scroll ──────────────────────── */
+      gsap.from(".skill-bar-fill", {
+        scaleX: 0,
+        duration: 1.2,
+        ease: "power3.out",
+        stagger: 0.06,
+        scrollTrigger: {
+          trigger: "#skills",
+          start: "top 75%",
+          toggleActions: "play none none reset",
+        },
+      });
+
+      /* ── 5. Section labels slide-in on scroll ───────────────────────── */
+      gsap.from(".section-label-wrap", {
+        x: -20,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".bento-grid",
+          start: "top 80%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      /* ── 6. Azure badge pulse on scroll ────────────────────────────── */
+      gsap.from(".az104-badge", {
+        scale: 0.85,
+        opacity: 0,
+        duration: 0.8,
+        ease: "back.out(1.4)",
+        scrollTrigger: {
+          trigger: "#azure",
+          start: "top 75%",
+          toggleActions: "play none none reset",
+        },
+      });
+
+      /* ── 7. Contact cards stagger on scroll ────────────────────────── */
+      gsap.from(".contact-link", {
+        y: 20,
+        opacity: 0,
+        stagger: 0.07,
+        duration: 0.55,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: "#contact",
+          start: "top 80%",
+          toggleActions: "play none none reset",
+        },
+      });
+
+      /* ── 8. Accessibility: respect prefers-reduced-motion ───────────── */
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.globalTimeline.timeScale(0);
+        ScrollTrigger.getAll().forEach((t) => t.kill());
+      });
+    },
+    { scope: containerRef }
+  );
+
   return (
-    <div className="min-h-screen bg-black font-body">
+    <div ref={containerRef} className="min-h-screen bg-black font-body">
 
       {/* ── NAV ─────────────────────────────────────────────────────────── */}
       <nav
         aria-label="Main navigation"
-        className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-6 px-6 py-3 rounded-full border border-[#1f1f1f] bg-black/85 backdrop-blur-md animate-fade-in"
+        className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-6 px-6 py-3 rounded-full border border-[#1f1f1f] bg-black/85 backdrop-blur-md"
         style={{ boxShadow: "0 2px 20px rgba(0,0,0,0.7)" }}
       >
         <span
@@ -138,11 +381,11 @@ export default function Home() {
           CS
         </span>
         {[
-          ["#hero",       "Home"],
+          ["#hero", "Home"],
           ["#experience", "Experience"],
-          ["#tfg",        "Thesis"],
-          ["#azure",      "Azure"],
-          ["#skills",     "Skills"],
+          ["#tfg", "Thesis"],
+          ["#azure", "Azure"],
+          ["#skills", "Skills"],
         ].map(([href, label]) => (
           <a
             key={href}
@@ -166,7 +409,7 @@ export default function Home() {
         {/* ═══ HERO ═══════════════════════════════════════════════════════ */}
         <section id="hero" aria-label="Introduction" className="mb-10">
           <div
-            className="bento-card relative p-8 sm:p-12 overflow-hidden animate-fade-up"
+            className="hero-card bento-card magnetic-card relative p-8 sm:p-12"
             style={{
               background: "linear-gradient(135deg, #0a0a0a 0%, #0d1520 55%, #0a0a0a 100%)",
               borderColor: "rgba(0,120,212,0.22)",
@@ -192,7 +435,7 @@ export default function Home() {
             <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10">
               {/* Avatar */}
               <div
-                className="flex-shrink-0 w-20 h-20 rounded-2xl flex items-center justify-center font-heading font-bold text-2xl"
+                className="hero-avatar flex-shrink-0 w-20 h-20 rounded-2xl flex items-center justify-center font-heading font-bold text-2xl"
                 style={{
                   background: "linear-gradient(135deg, rgba(0,120,212,0.15), rgba(0,120,212,0.30))",
                   border: "1px solid rgba(0,120,212,0.35)",
@@ -204,7 +447,7 @@ export default function Home() {
               </div>
 
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
+                <div className="section-label-wrap flex items-center gap-2 mb-2">
                   <div className="glow-dot" aria-hidden="true" />
                   <span
                     className="text-[11px] font-heading font-semibold tracking-[0.14em] uppercase"
@@ -214,16 +457,16 @@ export default function Home() {
                   </span>
                 </div>
 
-                <h1 className="font-heading font-semibold text-3xl sm:text-4xl lg:text-5xl text-white leading-tight mb-2">
+                <h1 className="hero-title font-heading font-semibold text-3xl sm:text-4xl lg:text-5xl text-white leading-tight mb-2">
                   Carlos Solana
                 </h1>
                 <p
-                  className="font-heading font-light text-lg sm:text-xl mb-4"
+                  className="hero-subtitle font-heading font-light text-lg sm:text-xl mb-4"
                   style={{ color: "#0078d4" }}
                 >
                   Computer Engineering Student · Cybersecurity &amp; Cloud
                 </p>
-                <p className="text-[#9ca3af] text-base max-w-xl leading-relaxed mb-6">
+                <p className="hero-body text-[#9ca3af] text-base max-w-xl leading-relaxed mb-6">
                   Final-year Computer Engineering student at{" "}
                   <span className="text-[#d1d5db] font-medium">Universidad de Zaragoza</span>,
                   specialising in Information Systems. Focused on{" "}
@@ -236,7 +479,7 @@ export default function Home() {
                 <div className="flex flex-wrap items-center gap-3">
                   <a
                     href="#experience"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-heading font-semibold text-sm transition-all duration-200 cursor-pointer hover:opacity-90 hover:-translate-y-px"
+                    className="hero-cta inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-heading font-semibold text-sm transition-all duration-200 cursor-pointer hover:opacity-90 hover:-translate-y-px"
                     style={{ background: "#0078d4", color: "#fff" }}
                   >
                     View experience
@@ -246,7 +489,7 @@ export default function Home() {
                     href="https://github.com/Csolanascript"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-heading font-semibold text-sm border transition-all duration-200 cursor-pointer hover:border-[#0078d4] hover:text-white"
+                    className="hero-cta inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-heading font-semibold text-sm border transition-all duration-200 cursor-pointer hover:border-[#0078d4] hover:text-white"
                     style={{ borderColor: "#1f1f1f", color: "#9ca3af" }}
                   >
                     <Github className="w-4 h-4" aria-hidden="true" />
@@ -259,10 +502,10 @@ export default function Home() {
               <div className="flex sm:flex-col gap-6 sm:gap-4 sm:text-right sm:border-l sm:pl-8 sm:border-[#1f1f1f] shrink-0">
                 {[
                   ["4th year", "Computer Eng."],
-                  ["2025",     "Nologin Internship"],
-                  ["AZ-104",   "In progress"],
+                  ["2025", "Nologin Internship"],
+                  ["AZ-104", "In progress"],
                 ].map(([val, lbl]) => (
-                  <div key={lbl}>
+                  <div key={lbl} className="hero-stats">
                     <p className="font-heading font-semibold text-xl sm:text-2xl text-white leading-none">
                       {val}
                     </p>
@@ -275,14 +518,16 @@ export default function Home() {
         </section>
 
         {/* ═══ BENTO GRID ═════════════════════════════════════════════════ */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="bento-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
           {/* ── EDUCATION ─────────────────────────────────────────────── */}
-          <section
+          <MagneticCard
             aria-label="Academic background"
-            className="bento-card p-6 animate-fade-up delay-100"
+            className="reveal-card p-6"
           >
-            <SectionLabel>Education</SectionLabel>
+            <div className="section-label-wrap">
+              <SectionLabel>Education</SectionLabel>
+            </div>
             <div className="flex items-start gap-3 mb-4">
               <div
                 className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
@@ -323,15 +568,17 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-          </section>
+          </MagneticCard>
 
           {/* ── EXPERIENCE: Nologin (2-col) ────────────────────────────── */}
-          <section
+          <MagneticCard
             id="experience"
             aria-label="Nologin experience"
-            className="bento-card p-6 sm:col-span-2 animate-fade-up delay-200"
+            className="reveal-card p-6 sm:col-span-2"
           >
-            <SectionLabel>Professional Experience</SectionLabel>
+            <div className="section-label-wrap">
+              <SectionLabel>Professional Experience</SectionLabel>
+            </div>
 
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4">
               <div>
@@ -374,13 +621,13 @@ export default function Home() {
                 (t) => <TechTag key={t}>{t}</TechTag>
               )}
             </div>
-          </section>
+          </MagneticCard>
 
           {/* ── AZURE / AZ-104 HIGHLIGHT (full-width) ───────────────────── */}
-          <section
+          <MagneticCard
             id="azure"
             aria-label="Azure Cloud and AZ-104"
-            className="bento-card p-6 lg:col-span-3 animate-fade-up delay-300 relative overflow-hidden"
+            className="reveal-card p-6 lg:col-span-3"
             style={{
               background: "linear-gradient(135deg, #0a0a0a 0%, #061526 60%, #0a0a0a 100%)",
               borderColor: "rgba(0,120,212,0.30)",
@@ -393,7 +640,9 @@ export default function Home() {
             />
 
             <div className="relative z-10">
-              <SectionLabel>Cloud Computing</SectionLabel>
+              <div className="section-label-wrap">
+                <SectionLabel>Cloud Computing</SectionLabel>
+              </div>
 
               <div className="flex flex-col lg:flex-row lg:items-center gap-6">
                 {/* Headline */}
@@ -429,7 +678,7 @@ export default function Home() {
 
                 {/* AZ-104 badge */}
                 <div
-                  className="flex flex-col items-center justify-center p-6 rounded-2xl border text-center min-w-[170px]"
+                  className="az104-badge flex flex-col items-center justify-center p-6 rounded-2xl border text-center min-w-[170px]"
                   style={{
                     background: "rgba(0,120,212,0.08)",
                     borderColor: "rgba(0,120,212,0.25)",
@@ -459,12 +708,12 @@ export default function Home() {
                 {/* Azure services */}
                 <div className="grid grid-cols-2 gap-2 min-w-[200px]">
                   {[
-                    { icon: <Server className="w-4 h-4" />,   label: "Virtual Machines" },
+                    { icon: <Server className="w-4 h-4" />, label: "Virtual Machines" },
                     { icon: <Database className="w-4 h-4" />, label: "Azure DB" },
-                    { icon: <Globe className="w-4 h-4" />,    label: "Web Servers" },
-                    { icon: <Layers className="w-4 h-4" />,   label: "Blob Storage" },
+                    { icon: <Globe className="w-4 h-4" />, label: "Web Servers" },
+                    { icon: <Layers className="w-4 h-4" />, label: "Blob Storage" },
                     { icon: <Workflow className="w-4 h-4" />, label: "Terraform IaC" },
-                    { icon: <Zap className="w-4 h-4" />,      label: "ERP Hosting" },
+                    { icon: <Zap className="w-4 h-4" />, label: "ERP Hosting" },
                   ].map(({ icon, label }) => (
                     <div
                       key={label}
@@ -477,15 +726,17 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </section>
+          </MagneticCard>
 
           {/* ── TFG / THESIS (2-col) ──────────────────────────────────── */}
-          <section
+          <MagneticCard
             id="tfg"
             aria-label="Bachelor's Thesis"
-            className="bento-card p-6 sm:col-span-2 animate-fade-up delay-400"
+            className="reveal-card p-6 sm:col-span-2"
           >
-            <SectionLabel>Bachelor&apos;s Thesis</SectionLabel>
+            <div className="section-label-wrap">
+              <SectionLabel>Bachelor&apos;s Thesis</SectionLabel>
+            </div>
 
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4">
               <div>
@@ -566,11 +817,13 @@ export default function Home() {
                 (t) => <TechTag key={t}>{t}</TechTag>
               )}
             </div>
-          </section>
+          </MagneticCard>
 
           {/* ── LANGUAGES + EXTRA ─────────────────────────────────────── */}
-          <div className="bento-card p-6 animate-fade-up delay-400">
-            <SectionLabel>About</SectionLabel>
+          <MagneticCard className="reveal-card p-6" aria-label="About and languages">
+            <div className="section-label-wrap">
+              <SectionLabel>About</SectionLabel>
+            </div>
             <div className="space-y-3 mt-1">
               <div className="p-3 rounded-xl bg-[#111] border border-[#1f1f1f]">
                 <p className="text-xs text-[#6b7280] uppercase tracking-wider font-semibold mb-2">
@@ -604,15 +857,17 @@ export default function Home() {
                 </p>
               </div>
             </div>
-          </div>
+          </MagneticCard>
 
           {/* ── SKILLS (full width) ────────────────────────────────────── */}
-          <section
+          <MagneticCard
             id="skills"
             aria-label="Technical skills"
-            className="bento-card p-6 lg:col-span-3 animate-fade-up delay-500"
+            className="reveal-card p-6 lg:col-span-3"
           >
-            <SectionLabel>Technical Skills</SectionLabel>
+            <div className="section-label-wrap">
+              <SectionLabel>Technical Skills</SectionLabel>
+            </div>
             <h2 className="font-heading font-semibold text-xl text-white mb-2">
               Competency stack
             </h2>
@@ -663,22 +918,24 @@ export default function Home() {
                 )}
               </div>
             </div>
-          </section>
+          </MagneticCard>
 
           {/* ── SECURITY TOOLS ────────────────────────────────────────── */}
-          <div className="bento-card p-6 animate-fade-up delay-600">
-            <SectionLabel>Security Tools</SectionLabel>
+          <MagneticCard className="reveal-card p-6" aria-label="Security tools">
+            <div className="section-label-wrap">
+              <SectionLabel>Security Tools</SectionLabel>
+            </div>
             <div className="grid grid-cols-3 gap-2 mt-2">
               {[
-                { icon: <Terminal className="w-5 h-5" />,    label: "Kali Linux" },
-                { icon: <Activity className="w-5 h-5" />,   label: "Graylog" },
-                { icon: <Shield className="w-5 h-5" />,     label: "Fortinet" },
-                { icon: <Network className="w-5 h-5" />,    label: "Palo Alto" },
-                { icon: <Eye className="w-5 h-5" />,        label: "OpenCTI" },
-                { icon: <Cpu className="w-5 h-5" />,        label: "Intel Owl" },
-                { icon: <Layers className="w-5 h-5" />,     label: "XSOAR" },
-                { icon: <Lock className="w-5 h-5" />,       label: "Prisma Cloud" },
-                { icon: <Workflow className="w-5 h-5" />,   label: "n8n" },
+                { icon: <Terminal className="w-5 h-5" />, label: "Kali Linux" },
+                { icon: <Activity className="w-5 h-5" />, label: "Graylog" },
+                { icon: <Shield className="w-5 h-5" />, label: "Fortinet" },
+                { icon: <Network className="w-5 h-5" />, label: "Palo Alto" },
+                { icon: <Eye className="w-5 h-5" />, label: "OpenCTI" },
+                { icon: <Cpu className="w-5 h-5" />, label: "Intel Owl" },
+                { icon: <Layers className="w-5 h-5" />, label: "XSOAR" },
+                { icon: <Lock className="w-5 h-5" />, label: "Prisma Cloud" },
+                { icon: <Workflow className="w-5 h-5" />, label: "n8n" },
               ].map(({ icon, label }) => (
                 <div
                   key={label}
@@ -690,16 +947,18 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          </div>
+          </MagneticCard>
 
           {/* ── CONTACT ───────────────────────────────────────────────── */}
-          <section
+          <MagneticCard
             id="contact"
             aria-label="Contact"
-            className="bento-card p-6 sm:col-span-2 animate-fade-up delay-700"
+            className="reveal-card p-6 sm:col-span-2"
             style={{ borderColor: "rgba(0,120,212,0.20)" }}
           >
-            <SectionLabel>Contact</SectionLabel>
+            <div className="section-label-wrap">
+              <SectionLabel>Contact</SectionLabel>
+            </div>
             <h2 className="font-heading font-semibold text-lg text-white mb-2">
               Let&apos;s talk
             </h2>
@@ -752,7 +1011,7 @@ export default function Home() {
                   target={href.startsWith("http") ? "_blank" : undefined}
                   rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
                   aria-label={label}
-                  className="flex items-center gap-3 p-3 rounded-xl bg-[#111] border border-[#1f1f1f] hover:border-[rgba(0,120,212,0.30)] transition-all duration-200 cursor-pointer group"
+                  className="contact-link flex items-center gap-3 p-3 rounded-xl bg-[#111] border border-[#1f1f1f] hover:border-[rgba(0,120,212,0.30)] transition-all duration-200 cursor-pointer group"
                 >
                   <span
                     className="group-hover:text-[#0078d4] transition-colors duration-200 flex-shrink-0"
@@ -774,7 +1033,7 @@ export default function Home() {
                 </a>
               ))}
             </div>
-          </section>
+          </MagneticCard>
 
         </div>{/* /bento grid */}
 
@@ -789,7 +1048,7 @@ export default function Home() {
               style={{ background: "#0078d4" }}
               aria-hidden="true"
             />
-            <span>Built with Next.js &amp; Tailwind CSS</span>
+            <span>Built with Next.js &amp; Tailwind CSS · Animated with GSAP</span>
           </div>
         </footer>
       </main>

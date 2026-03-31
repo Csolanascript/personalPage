@@ -82,18 +82,84 @@ body {
   .bg-surface-2 { background-color: #111111; }
   .bg-surface-3 { background-color: #1a1a1a; }
 
-  /* Bento card base */
+  /* ── Bento card base ───────────────────────────────────────────────── */
   .bento-card {
     background: #0a0a0a;
     border: 1px solid #1f1f1f;
     border-radius: 20px;
-    transition: border-color 250ms ease, box-shadow 250ms ease, transform 250ms ease;
+    transition: border-color 300ms ease, box-shadow 300ms ease;
     cursor: default;
     overflow: hidden;
+    /* Initial state for GSAP reveal */
+    will-change: transform, opacity;
   }
+
   .bento-card:hover {
-    border-color: rgba(0,120,212,0.30);
-    box-shadow: 0 0 0 1px rgba(0,120,212,0.12), 0 8px 40px rgba(0,120,212,0.12);
+    border-color: rgba(0,120,212,0.35);
+    box-shadow:
+      0 0 0 1px rgba(0,120,212,0.14),
+      0 8px 40px rgba(0,120,212,0.14);
+  }
+
+  /* ── Magnetic card — tracks cursor glow ────────────────────────────── */
+  .magnetic-card {
+    transform-style: preserve-3d;
+    /* CSS custom props used by GSAP to position the glow */
+    --glow-x: 50%;
+    --glow-y: 50%;
+  }
+
+  /* The radial glow element rendered inside each card */
+  .magnetic-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    /* Radial highlight that follows --glow-x / --glow-y */
+    background: radial-gradient(
+      280px circle at var(--glow-x) var(--glow-y),
+      rgba(0, 120, 212, 0.11) 0%,
+      rgba(0, 120, 212, 0.04) 40%,
+      transparent 70%
+    );
+    border-radius: inherit;
+    transition: opacity 0.4s ease;
+  }
+
+  /* Border shimmer on hover — separate from the glow layer */
+  .magnetic-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid transparent;
+    background: radial-gradient(
+      300px circle at var(--glow-x) var(--glow-y),
+      rgba(0, 120, 212, 0.4) 0%,
+      transparent 70%
+    ) border-box;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) padding-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask:
+      linear-gradient(#fff 0 0) padding-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+  }
+
+  .magnetic-card:hover::after {
+    opacity: 1;
+  }
+
+  /* Ensure card content sits above the glow layers */
+  .magnetic-card > *:not(.magnetic-glow) {
+    position: relative;
+    z-index: 2;
   }
 
   /* Azure gradient line accent */
@@ -111,6 +177,7 @@ body {
     background: #0078d4;
     box-shadow: 0 0 8px 2px rgba(0,120,212,0.5);
     animation: pulseDot 2s ease-in-out infinite;
+    flex-shrink: 0;
   }
 
   /* Tag chip */
@@ -127,9 +194,25 @@ body {
     color: #0078d4;
     border: 1px solid rgba(0,120,212,0.20);
   }
+
+  /* Skill bar fill — GSAP animates scaleX from 0 */
+  .skill-bar-fill {
+    transition: box-shadow 250ms ease;
+  }
+
+  /* Reveal cards start invisible — GSAP handles entrance */
+  .reveal-card {
+    opacity: 0;
+  }
 }
 
-/* Stagger animation delays */
+/* ── Keyframes ─────────────────────────────────────────────────────────────── */
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px 2px rgba(0,120,212,0.5); }
+  50%       { opacity: 0.6; box-shadow: 0 0 14px 4px rgba(0,120,212,0.3); }
+}
+
+/* Stagger animation delays (kept for any CSS-only fallbacks) */
 .delay-100 { animation-delay: 100ms; }
 .delay-200 { animation-delay: 200ms; }
 .delay-300 { animation-delay: 300ms; }
@@ -139,9 +222,15 @@ body {
 .delay-700 { animation-delay: 700ms; }
 .delay-800 { animation-delay: 800ms; }
 
+/* ── Accessibility ──────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+  /* Ensure reveal cards are visible even without animation */
+  .reveal-card {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
