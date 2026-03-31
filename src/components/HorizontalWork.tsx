@@ -94,7 +94,7 @@ export default function HorizontalWork() {
   }, { scope: sectionRef });
 
   return (
-    <section ref={sectionRef} className="lg:h-screen w-full flex items-center overflow-visible lg:overflow-hidden bg-black lg:border-y border-white/10 relative py-20 lg:py-0">
+    <section ref={sectionRef} className="lg:h-screen w-full flex items-center overflow-visible lg:overflow-hidden bg-transparent lg:border-y border-white/10 relative py-12 lg:py-0">
       {/* Decorative vertical lines (Desktop only) */}
       <div className="absolute inset-0 flex justify-between pointer-events-none opacity-5 hidden lg:flex">
         {[...Array(10)].map((_, i) => (
@@ -102,18 +102,18 @@ export default function HorizontalWork() {
         ))}
       </div>
 
-      <div ref={containerRef} className="flex flex-col lg:flex-row lg:flex-nowrap gap-10 items-stretch px-[5vw] lg:px-[10vw] w-full lg:w-auto">
+      <div ref={containerRef} className="flex flex-col lg:flex-row lg:flex-nowrap gap-8 lg:gap-10 items-stretch px-[6vw] lg:px-[10vw] w-full lg:w-auto">
         {/* Intro Slide */}
-        <div className="flex-shrink-0 lg:w-[50vw] flex flex-col justify-center mb-10 lg:mb-0">
-            <span className="tech-label">SELECTED WORKS // 01</span>
-            <h2 className="headline-huge mb-6 lg:mb-10 text-5xl lg:text-9xl">Selected<br/><span className="text-brand">Experience</span></h2>
+        <div className="flex-shrink-0 lg:w-[50vw] flex flex-col justify-center mb-8 lg:mb-0">
+            <span className="tech-label pl-0">SELECTED WORKS // 01</span>
+            <h2 className="headline-huge mt-4 mb-6 lg:mb-10 text-2xl sm:text-5xl lg:text-9xl tracking-tighter overflow-wrap-anywhere">Selected<br/><span className="text-brand">Experience</span></h2>
         </div>
 
         {/* Project Cards */}
         {PROJECTS.map((project, index) => (
           <div 
             key={project.id} 
-            className="project-card flex-shrink-0 w-full lg:w-[40vw] lg:h-[60vh] grid-border-heavy p-8 flex flex-col justify-between group transition-colors duration-500 hover:bg-[#ff0033]/5 relative lg:overflow-hidden"
+            className="project-card flex-shrink-0 w-full lg:w-[40vw] lg:h-[60vh] grid-border-heavy p-6 lg:p-8 flex flex-col justify-between group transition-colors duration-500 hover:bg-[#ff0033]/5 relative lg:overflow-hidden"
           >
             {/* Background ID number (Desktop) */}
             <div className="absolute -right-10 -bottom-10 opacity-[0.03] font-syne text-[15rem] lg:text-[20rem] font-black select-none pointer-events-none transition-opacity duration-500 group-hover:opacity-[0.08] hidden sm:block">
@@ -122,9 +122,9 @@ export default function HorizontalWork() {
 
             <div className="flex justify-between items-start mb-6 lg:mb-0">
               <div>
-                <span className="tech-label mb-4 block opacity-50">{project.id}</span>
-                <h3 className="font-syne text-4xl lg:text-5xl font-extrabold uppercase mb-2 group-hover:text-brand transition-colors">{project.title}</h3>
-                <p className="text-brand font-mono text-xs lg:text-sm tracking-widest">{project.subtitle}</p>
+                <span className="tech-label mb-4 block opacity-50 px-0">{project.id}</span>
+                <h3 className="font-syne text-xl sm:text-4xl lg:text-5xl font-extrabold uppercase mb-2 group-hover:text-brand transition-colors overflow-wrap-anywhere">{project.title}</h3>
+                <p className="text-brand font-mono text-[10px] lg:text-sm tracking-widest">{project.subtitle}</p>
               </div>
               <div className="lg:block">
                 {project.icon}
@@ -132,7 +132,7 @@ export default function HorizontalWork() {
             </div>
 
             <div>
-              <p className="text-[#9ca3af] text-base lg:text-lg max-w-md leading-relaxed mb-6 lg:mb-8">
+              <p className="text-[#9ca3af] text-sm lg:text-lg max-w-md leading-relaxed mb-6 lg:mb-8">
                 {project.description}
               </p>
               

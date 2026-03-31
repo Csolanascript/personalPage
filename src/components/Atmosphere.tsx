@@ -13,10 +13,12 @@ interface FloatText {
 }
 
 const TECH_STRINGS = [
-  "LAT: 41.6488", "LONG: -0.8891", "HEX: #FF0033", "V.2026.TEST", 
+  "LAT: 41.6488", "LONG: -0.8891", "HEX: #FF0033", "V.2026.REFINED", 
   "SOC_ACTIVE", "THREAT_FOUND", "AZ_104", "SYS_RESILIENT", "STIX_2.1",
   "01011001", "00110101", "TCP_IP_EST", "IOC_INDEX", "DOCKER_RUN",
-  "0x7FFD3", "0x004F", "404_NOT_FOUND", "200_OK"
+  "0x7FFD3", "0x004F", "404_NOT_FOUND", "200_OK", "OPENCTI_SESS", "INTELOWL_V3",
+  "MALWARE_ANALYSIS", "CLOUD_INFRA", "TERRAFORM_INIT", "DEPLOY_STABLE",
+  "K8S_POD", "NET_TRAFFIC", "ENCRYPT_AES"
 ];
 
 export default function Atmosphere() {
@@ -24,17 +26,17 @@ export default function Atmosphere() {
   const itemsRef = useRef<FloatText[]>([]);
 
   useEffect(() => {
-    const count = 15;
+    const count = 35; // Increased density
     const items: FloatText[] = [];
     for (let i = 0; i < count; i++) {
       items.push({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
-        vx: (Math.random() - 0.5) * 0.2,
-        vy: (Math.random() - 0.5) * 0.2,
+        vx: (Math.random() - 0.5) * 0.4, // Faster drift
+        vy: (Math.random() - 0.5) * 0.4,
         text: TECH_STRINGS[Math.floor(Math.random() * TECH_STRINGS.length)],
-        opacity: Math.random() * 0.15 + 0.05,
-        size: Math.random() * 4 + 8
+        opacity: Math.random() * 0.08 + 0.02, // Lower opacity but more items
+        size: Math.random() * 3 + 7
       });
     }
     itemsRef.current = items;
@@ -68,15 +70,15 @@ export default function Atmosphere() {
   }, []);
 
   return (
-    <div ref={containerRef} className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {[...Array(15)].map((_, i) => (
+    <div ref={containerRef} className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
+      {[...Array(35)].map((_, i) => (
         <span 
           key={i} 
-          className="absolute font-mono tech-label whitespace-nowrap"
+          className="absolute font-mono tech-label whitespace-nowrap opacity-[0.05] filter blur-[0.3px]"
           style={{ 
-            opacity: 0.1, // Initial opacity
-            fontSize: '9px',
-            willChange: 'transform'
+            fontSize: '7px',
+            willChange: 'transform',
+            color: Math.random() > 0.8 ? '#ff0033' : 'white' // Occasional red strings
           }}
         >
           {TECH_STRINGS[i % TECH_STRINGS.length]}

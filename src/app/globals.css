@@ -29,6 +29,7 @@ body {
   font-family: 'Space Grotesk', sans-serif;
   line-height: 1.6;
   overflow-x: hidden;
+  width: 100vw;
 }
 
 /* Custom scrollbar */
@@ -49,8 +50,9 @@ body {
 
   /* ── Headlines ─────────────────────────────────────────────────── */
   .headline-huge {
-    @apply font-syne font-extrabold uppercase leading-[0.85] tracking-tight;
-    font-size: clamp(4rem, 15vw, 12rem);
+    @apply font-syne font-extrabold uppercase leading-[0.82] tracking-tighter overflow-wrap-anywhere;
+    /* Mobile-first: start small, scale up. Lowered min to 2.4rem for ~320px screens */
+    font-size: clamp(2.4rem, 16vw, 13rem);
   }
 
   .headline-reveal {
@@ -69,6 +71,12 @@ body {
   /* ── Technical Labels ──────────────────────────────────────────── */
   .tech-label {
     @apply font-mono text-[9px] uppercase tracking-widest opacity-50 px-2 py-1;
+  }
+
+  /* ── Layout Helpers ──────────────────────────────────────────── */
+  .overflow-wrap-anywhere {
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   /* ── Horizontal Scroll Utilities ───────────────────────────────── */
