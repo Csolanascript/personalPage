@@ -33,6 +33,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import StarBackground from "@/components/StarBackground";
 
 // Register plugins once at module level (safe for SSR guard inside useGSAP)
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -366,7 +367,8 @@ export default function Home() {
   );
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-black font-body">
+    <div ref={containerRef} className="relative min-h-screen bg-black font-body">
+      <StarBackground />
 
       {/* ── NAV ─────────────────────────────────────────────────────────── */}
       <nav
@@ -407,7 +409,7 @@ export default function Home() {
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20">
 
         {/* ═══ HERO ═══════════════════════════════════════════════════════ */}
-        <section id="hero" aria-label="Introduction" className="mb-10">
+        <section id="hero" aria-label="Introduction" className="mb-24 sm:mb-28 lg:mb-32">
           <div
             className="hero-card bento-card magnetic-card relative p-8 sm:p-12"
             style={{
@@ -513,6 +515,14 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+            </div>
+            
+            {/* Scroll Indicator */}
+            <div className="scroll-indicator hidden lg:flex" aria-hidden="true">
+              <div className="scroll-mouse">
+                <div className="scroll-wheel" />
+              </div>
+              <span className="text-[9px] font-heading font-bold uppercase tracking-widest">Scroll</span>
             </div>
           </div>
         </section>
