@@ -22,6 +22,9 @@ const config: Config = {
           800: "#003762",
           900: "#00213d",
         },
+        brand: {
+          DEFAULT: "var(--brand-color, #0078d4)",
+        },
         "pure-black": "#000000",
         "surface":    "#0a0a0a",
         "surface-2":  "#111111",

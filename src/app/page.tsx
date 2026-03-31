@@ -9,14 +9,13 @@ import {
   Linkedin, 
   Mail, 
   ChevronRight, 
-  ExternalLink,
-  Shield,
-  Cloud,
-  Terminal,
-  Activity,
-  Box,
-  Monitor,
+  Shield, 
+  Cloud, 
+  Terminal, 
+  Activity, 
+  Monitor, 
   Menu,
+  Sparkles,
 } from "lucide-react";
 
 import SmoothScroll from "@/components/SmoothScroll";
@@ -33,7 +32,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 function TechTag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="tech-label border border-white/20 hover:border-brand/50 hover:text-brand transition-colors duration-300">
+    <span className="tech-label border border-white/10 hover:border-brand/40 hover:text-brand transition-colors duration-300 px-3 py-1 text-[10px] sm:text-xs">
       {children}
     </span>
   );
@@ -55,10 +54,10 @@ function Marquee({ text, direction = 1 }: { text: string; direction?: 1 | -1 }) 
   }, { scope: marqueeRef });
 
   return (
-    <div className="overflow-hidden whitespace-nowrap border-y border-white/10 py-6 bg-black select-none z-10 relative">
+    <div className="overflow-hidden whitespace-nowrap border-y border-white/5 py-4 lg:py-6 bg-black select-none z-10 relative">
       <div ref={marqueeRef} className="inline-block">
         {[...Array(6)].map((_, i) => (
-          <span key={i} className="font-syne font-black text-4xl lg:text-6xl uppercase tracking-tighter mx-4 opacity-10">
+          <span key={i} className="font-syne font-black text-3xl lg:text-5xl uppercase tracking-tighter mx-4 opacity-10">
             {text} <span className="text-brand">/</span>{" "}
           </span>
         ))}
@@ -69,13 +68,24 @@ function Marquee({ text, direction = 1 }: { text: string; direction?: 1 | -1 }) 
 
 function SplitText({ text, className = "", id = "" }: { text: string; className?: string; id?: string; }) {
     return (
-      <span id={id} className={`inline-block overflow-hidden ${className}`}>
+      <span id={id} className={`inline-block split-parent ${className}`}>
         {text.split("").map((char, i) => (
-          <span key={i} className="char inline-block translate-y-[105%]">
+          <span key={i} className="char inline-block translate-y-[110%] opacity-0 blur-md hover:scale-125 hover:text-brand hover:-translate-y-2 hover:drop-shadow-[0_0_15px_rgba(var(--brand-rgb),0.5)] transition-all duration-300 cursor-default py-1">
             {char === " " ? "\u00A0" : char}
           </span>
         ))}
       </span>
+    );
+}
+
+function NumericTicker({ text = "111000100100000101001 /////////// 101000010011110 /////////// 10110100100000", className = "" }) {
+    return (
+        <div className={`w-full overflow-hidden border-y border-black bg-brand py-1 flex grayscale font-mono text-[7px] tracking-widest uppercase opacity-90 ${className}`}>
+            <div className="whitespace-nowrap animate-infinite-scroll flex gap-20 items-center">
+                <span>{text}</span>
+                <span>{text}</span>
+            </div>
+        </div>
     );
 }
 
@@ -88,15 +98,7 @@ export default function Home() {
   const [hasEntered, setHasEntered] = useState(false);
 
   useEffect(() => {
-    // Check session storage for "first visit" wow effect
-    const visited = sessionStorage.getItem("portfolio_visited");
-    if (!visited) {
-      setHasEntered(true);
-      sessionStorage.setItem("portfolio_visited", "true");
-    } else {
-        // We still play the animation but maybe faster
-        setHasEntered(true);
-    }
+    setHasEntered(true);
   }, []);
 
   useGSAP(() => {
@@ -105,59 +107,52 @@ export default function Home() {
     const mm = gsap.matchMedia();
 
     // ─────────────────────────────────────────────────────────────
-    // Desktop Animations (GOD mode)
+    // Desktop Design
     // ─────────────────────────────────────────────────────────────
     mm.add("(min-width: 1024px)", () => {
+      document.documentElement.style.setProperty("--brand-color", "#0078d4");
+      document.documentElement.style.setProperty("--brand-rgb", "0, 120, 212");
+
       const deployTl = gsap.timeline({ defaults: { ease: "expo.out" } });
       deployTl
         .to(".hero-main-title .char", { 
           y: "0%", 
-          duration: 1.8, 
-          stagger: 0.02,
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 1.2, 
+          stagger: 0.02, // Very fast wave, almost unified
           delay: 0.5
         })
-        .from(".nav-box", { opacity: 0, y: -20, stagger: 0.05, duration: 1 }, "-=1.2")
-        .from(".hero-sub-details", { opacity: 0, x: -30, duration: 1.2 }, "-=1")
-        .from(".qr-placeholder", { scale: 0, opacity: 0, duration: 1, ease: "back.out(1.7)" }, "-=0.8");
+        .from(".hero-sub-details", { 
+          opacity: 0, 
+          y: 20, 
+          duration: 1.2 
+        }, "-=0.8");
     });
 
     // ─────────────────────────────────────────────────────────────
-    // Mobile Animations (2x FASTER)
+    // Mobile Design
     // ─────────────────────────────────────────────────────────────
     mm.add("(max-width: 1023px)", () => {
-      const deployTl = gsap.timeline({ defaults: { ease: "power4.out" } });
+      document.documentElement.style.setProperty("--brand-color", "#ff0033");
+      document.documentElement.style.setProperty("--brand-rgb", "255, 0, 51");
+
+      const deployTl = gsap.timeline({ 
+        defaults: { ease: "power4.out", force3D: true }
+      });
       deployTl
         .to(".hero-main-title .char", { 
           y: "0%", 
-          duration: 0.8, // Faster
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 0.8,
           stagger: 0.015,
           delay: 0.2
         })
-        .from(".nav-box", { opacity: 0, y: -10, stagger: 0.03, duration: 0.5 }, "-=0.6")
-        .from(".hero-sub-details", { opacity: 0, y: 15, duration: 0.6 }, "-=0.4");
+        .from(".ticker-bar", { scaleX: 0, duration: 0.8, ease: "expo.inOut" }, "-=0.4");
     });
 
-    // ─────────────────────────────────────────────────────────────
-    // Perpetual Floating Animation (Drift)
-    // ─────────────────────────────────────────────────────────────
-    // Start after initial deploy to avoid buggy intersections
-    gsap.to(".hero-main-title .char", {
-        y: "-=8",
-        x: "+=4",
-        duration: 3 + Math.random() * 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        delay: 2.5, // Let the main intro finish first
-        stagger: {
-            each: 0.15,
-            from: "random"
-        }
-    });
-
-    // ─────────────────────────────────────────────────────────────
-    // Shared Logic
-    // ─────────────────────────────────────────────────────────────
+    // Shared Section Reveals
     gsap.utils.toArray(".reveal-section").forEach((section: any) => {
       gsap.from(section, {
         opacity: 0,
@@ -165,199 +160,191 @@ export default function Home() {
         duration: 0.8,
         scrollTrigger: {
           trigger: section,
-          start: "top 90%",
+          start: "top 95%",
           toggleActions: "play none none none",
         },
       });
-    });
-
-    // 3. Hover Distortion on Hero Letters
-    const chars = document.querySelectorAll(".hero-main-title .char");
-    chars.forEach(char => {
-        char.addEventListener("mouseenter", () => {
-            gsap.to(char, { scaleY: 1.4, color: "#ff0033", duration: 0.3 });
-        });
-        char.addEventListener("mouseleave", () => {
-            gsap.to(char, { scaleY: 1, color: "white", duration: 0.6, ease: "elastic.out(1, 0.3)" });
-        });
     });
 
   }, { scope: containerRef, dependencies: [hasEntered] });
 
   return (
     <SmoothScroll>
-      <div ref={containerRef} className="relative min-h-screen bg-black text-white font-sans selection:bg-brand selection:text-white">
+      <div ref={containerRef} className="relative min-h-screen bg-black text-white font-sans selection:bg-brand selection:text-white overflow-x-hidden">
         
         <StarBackground />
         <Atmosphere />
-        <WarpBackground />
+        
+        <div className="fixed inset-0 lg:opacity-40 transition-colors duration-1000">
+             <WarpBackground />
+        </div>
 
-        {/* ── TOP NAV (Wodniack Screenshot Style) ─────────────────────── */}
-        <header className="fixed top-0 left-0 w-full z-50 border-b border-white/10 flex items-stretch h-16 lg:h-24 bg-black/80 backdrop-blur-md">
-          {/* Logo Box */}
-          <div className="nav-box flex-shrink-0 border-r border-white/10 px-5 lg:px-10 flex items-center justify-center">
-             <span className="font-syne font-black text-2xl lg:text-4xl tracking-tighter">CS</span>
+        {/* ── TOP NAV ─────────────────────── */}
+        <header className="fixed top-0 left-0 w-full z-50 flex items-stretch h-12 lg:h-16 bg-brand lg:bg-black/50 lg:backdrop-blur-xl border-b border-black lg:border-white/10 transition-all">
+          <div className="flex-shrink-0 border-r border-black lg:border-white/10 px-4 lg:px-8 flex items-center justify-center">
+             <span className="font-syne font-black text-xl lg:text-2xl text-black lg:text-white tracking-tighter">CS</span>
           </div>
 
-          {/* Center Space / Subtext */}
-          <div className="nav-box flex-grow flex items-center px-6 hidden lg:flex">
-             <span className="tech-label opacity-30 text-[8px] animate-pulse">VAULT_V.2.0.2.6_SYSTEM_ACTIVE</span>
+          <div className="flex-grow flex items-stretch">
+              <nav className="flex items-stretch overflow-x-auto no-scrollbar" aria-label="Main Navigation">
+                {["ABOUT", "WORK", "CONTACT"].map((link) => (
+                  <a 
+                    key={link} 
+                    href={`#${link.toLowerCase()}`}
+                    className="px-4 lg:px-8 flex items-center justify-center font-syne font-bold text-[9px] lg:text-xs tracking-[0.3em] text-black lg:text-white lg:hover:text-brand transition-colors whitespace-nowrap border-r border-black lg:border-white/10"
+                  >
+                    {link}
+                  </a>
+                ))}
+              </nav>
           </div>
 
-          {/* Links Boxes */}
-          <nav className="flex items-stretch overflow-x-auto lg:overflow-visible">
-            {["ABOUT", "WORK", "CONTACT"].map((link) => (
-              <a 
-                key={link} 
-                href={`#${link.toLowerCase()}`}
-                className="nav-box border-l border-white/10 px-4 lg:px-12 flex items-center justify-center font-syne font-bold text-[9px] lg:text-xs tracking-widest hover:bg-brand transition-colors cursor-pointer"
-              >
-                {link}
-              </a>
-            ))}
-          </nav>
-
-          {/* Hire / Dark-Mode / Social Boxes */}
-          <div className="flex items-stretch">
-            <div className="nav-box border-l border-white/10 px-5 lg:px-10 flex flex-col items-center justify-center bg-brand/5">
-                <span className="tech-label text-[7px] lg:text-[8px] mb-0.5 lg:mb-1">AVAILABLE</span>
-                <span className="font-syne font-bold text-[9px] lg:text-[10px] text-brand">HIRE</span>
-            </div>
-            {/* QR Placeholder Like Screenshot - Hidden on Mobile */}
-            <div className="nav-box qr-placeholder border-l border-white/10 px-4 hidden lg:flex items-center justify-center">
-                 <div className="w-12 h-12 border-2 border-white/20 p-1 opacity-40">
-                    <div className="w-full h-full bg-white/20" />
-                 </div>
-            </div>
+          <div className="flex items-stretch flex-shrink-0">
+            <button className="lg:hidden border-l border-black px-4 flex items-center justify-center text-black" aria-label="Open Menu">
+                <Menu size={18} />
+            </button>
+            <a href="mailto:carlossolanamelero@gmail.com" className="hidden lg:flex px-8 items-center justify-center bg-brand text-black font-syne font-black text-xs gap-3 cursor-pointer hover:bg-white transition-colors" aria-label="Hire Carlos Solana">
+                <span>HIRE ME</span>
+                <ChevronRight size={14} />
+            </a>
           </div>
         </header>
 
-        {/* ── HERO SECTION (Unboxed Atmosphere) ─────────────────────────── */}
-        <section id="home" className="min-h-[100svh] flex flex-col justify-end px-[6vw] lg:px-[5vw] pb-[8vh] lg:pb-[10vh] pt-24 lg:pt-32 overflow-hidden relative">
-          <div className="absolute top-1/4 left-[5vw] hero-sub-details hidden lg:block opacity-40">
-              <span className="tech-label block mb-2 tracking-[0.4em]">SYSTEM ENGINEER</span>
-              <span className="tech-label block mb-2 tracking-[0.4em]">SOC ANALYST</span>
-              <span className="tech-label block tracking-[0.4em]">CLOUD ARCHITECT</span>
+        {/* ── HERO SECTION ─────────────────────────── */}
+        <section id="home" className="min-h-[100svh] flex flex-col pt-12 lg:pt-0 lg:justify-center relative overflow-hidden">
+          
+          <div className="flex-grow flex flex-col justify-center max-w-full">
+              <h1 className="sr-only">Carlos Solana - Sistemas y Ciberseguridad</h1>
+
+              {/* Mobile Setup */}
+              <div className="lg:hidden flex flex-col justify-center flex-grow p-5" aria-hidden="true">
+                  <NumericTicker className="ticker-bar mb-6" />
+                  <div className="bg-brand p-8 transition-colors duration-500">
+                     <div className="hero-main-title text-[clamp(2rem,12vw,4.5rem)] font-syne font-black uppercase leading-[0.8] tracking-tighter text-black flex flex-col items-center text-center">
+                        <div><SplitText text="CARLOS" /></div>
+                        <div className="flex items-center gap-2">
+                           <SplitText text="SOLANA" />
+                           <Sparkles size={20} />
+                        </div>
+                     </div>
+                  </div>
+                  <NumericTicker className="ticker-bar mt-6 bg-brand text-black" text="VAULT_V.2.0.2.6 // AZURE_SEC // THREAT_INTEL" />
+              </div>
+
+              {/* Desktop Setup */}
+              <div className="hidden lg:block w-full max-w-[1600px] mx-auto px-[8vw]" aria-hidden="true">
+                  <div className="hero-main-title text-[clamp(4rem,9vw,10.5rem)] font-syne font-black uppercase leading-[0.8] tracking-tighter">
+                     <div className="overflow-visible"><SplitText text="CARLOS" /></div>
+                     <div className="flex items-center gap-12">
+                        <SplitText text="SOLANA" className="text-brand" />
+                        <div className="flex-grow h-[1px] bg-white/10" />
+                        <ArrowDownIcon className="w-10 h-10 text-brand animate-bounce hidden xl:block" />
+                     </div>
+                  </div>
+                  
+                  <div className="hero-sub-details mt-10 flex flex-col lg:flex-row gap-10 items-end justify-between border-t border-white/5 pt-10">
+                     <div className="max-w-xl">
+                        <p className="text-lg 2xl:text-xl font-syne font-light text-[#9ca3af] leading-tight tracking-tight">
+                           Architecting <span className="text-brand font-bold italic underline decoration-brand/20 underline-offset-[10px]">Digital Fortresses</span> with precision and active defense.
+                        </p>
+                     </div>
+                     <div className="flex gap-3">
+                        <TechTag>SOC SPECIALIST</TechTag>
+                        <TechTag>AZURE CLOUD</TechTag>
+                        <TechTag>AUTO_SECURITY</TechTag>
+                     </div>
+                  </div>
+              </div>
           </div>
 
-          <div className="relative z-10 w-full mb-4 overflow-hidden">
-            <h1 className="hero-main-title text-5xl sm:text-7xl lg:text-[13rem] font-syne font-extrabold uppercase leading-[0.8] mb-8 lg:mb-12 select-none group max-w-full tracking-tighter">
-              <SplitText text="CARLOS" /><br/>
-              <span className="flex items-center gap-2 lg:gap-4 max-w-full">
-                 <div className="w-8 lg:w-16 h-0.5 lg:h-1 bg-brand hidden lg:block animate-pulse" />
-                 <SplitText text="SOLANA" className="text-brand" />
-              </span>
-            </h1>
-            
-            <div className="hero-sub-details grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-end border-t border-white/10 pt-8 lg:pt-12">
-               <div className="max-w-2xl">
-                 <p className="text-base lg:text-4xl font-syne font-light leading-tight">
-                    Forging <span className="text-brand font-bold italic underline">Digital Fortresses</span> with automated defense and architectural precision.
-                 </p>
-                 <div className="flex flex-wrap gap-2 lg:gap-4 mt-6 lg:mt-8">
-                    <TechTag>SOC SPECIALIST</TechTag>
-                    <TechTag>AZURE CLOUD</TechTag>
-                    <TechTag>TERRAFORM IaC</TechTag>
-                 </div>
-               </div>
-               
-               <div className="flex flex-col lg:items-end gap-6 h-full justify-between">
-                  <div className="text-right hidden lg:block">
-                      <p className="tech-label text-[10px] opacity-40 max-w-sm ml-auto">
-                        BASED IN ZARAGOZA / SPAIN. WORKING GLOBALLY. SPECIALISING IN THREAT INTELLIGENCE AND CLOUD INFRASTRUCTURE.
-                      </p>
-                  </div>
-                  <div className="flex gap-4">
-                    <a href="https://github.com/Csolanascript" target="_blank" className="p-6 border border-white/10 hover:bg-brand transition-all">
-                        <Github className="w-6 h-6" />
-                    </a>
-                    <a href="mailto:contact@csolana.dev" className="p-6 border border-white/10 hover:bg-brand transition-all">
-                        <Mail className="w-6 h-6" />
-                    </a>
-                    <a href="#" className="p-6 border border-white/10 hover:bg-brand transition-all">
-                        <Monitor className="w-6 h-6" />
-                    </a>
-                  </div>
-               </div>
-            </div>
+          <div className="px-5 lg:px-[8vw] max-w-[1600px] mx-auto w-full pb-8 flex justify-between items-end border-t border-white/5 lg:border-none pt-8 lg:pt-0">
+              <div className="lg:hidden">
+                  <p className="tech-label opacity-40 text-[8px] tracking-widest uppercase">Based in Spain // Global Reach</p>
+              </div>
+              <div className="flex gap-4 lg:gap-6">
+                 {[
+                   { Icon: Github, url: "https://github.com/Csolanascript", label: "GitHub Profile" },
+                   { Icon: Mail, url: "mailto:carlossolanamelero@gmail.com", label: "Email Carlos" },
+                   { Icon: Linkedin, url: "https://linkedin.com/in/carlos-solana-melero", label: "LinkedIn Profile" }
+                 ].map((social, i) => (
+                   <a 
+                     key={i} 
+                     href={social.url} 
+                     target="_blank"
+                     className="p-3 lg:p-5 border border-white/10 hover:bg-brand hover:text-black hover:border-brand transition-all duration-500 rounded-sm"
+                     aria-label={social.label}
+                   >
+                     <social.Icon size={18} />
+                   </a>
+                 ))}
+              </div>
           </div>
         </section>
 
         <Marquee text="THREAT INTEL / OPENCTI / INTEL OWL / AZURE / SOC" />
 
-        {/* ── ABOUT SECTION (Grid Style) ────────────────────────────────── */}
-        <section id="about" className="py-[15vh] lg:py-[20vh] px-[5vw] grid grid-cols-1 lg:grid-cols-2 gap-20 bg-transparent relative z-10 border-b border-white/5">
+        {/* ── ABOUT SECTION ────────────────────────────────── */}
+        <section id="about" className="py-[10vh] lg:py-[15vh] px-[6vw] lg:px-[8vw] max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 bg-transparent relative z-10">
           <div className="reveal-section">
-            <span className="tech-label text-brand font-bold pl-0">PROFILE // 00</span>
-            <h2 className="font-syne text-3xl sm:text-5xl lg:text-8xl font-black uppercase mt-4 mb-10 leading-[0.85] overflow-wrap-anywhere">Hybrid<br/><span className="italic text-brand sm:text-white">Systems.</span></h2>
-            <div className="space-y-6 text-[#9ca3af] text-lg lg:text-xl leading-relaxed max-w-xl">
-              <p>
-                Bridging the gap between <span className="text-white">Cloud Architecture</span> and <span className="text-white">Active Defense</span>. Studying Information Systems at Universidad de Zaragoza.
-              </p>
-              <p>
-                Specialising in Threat Intelligence automation during my internship at <span className="text-brand font-bold">Nologin Consulting</span>.
-              </p>
+            <span className="tech-label text-brand font-bold pl-0 tracking-[0.4em]">PROFILE // 00</span>
+            <h2 className="font-syne text-[clamp(2rem,6vw,4.5rem)] font-black uppercase mt-6 mb-8 leading-[0.85]">Hybrid<br/><span className="italic text-brand lg:text-white">Systems.</span></h2>
+            <div className="space-y-6 text-[#9ca3af] text-lg lg:text-xl font-light leading-relaxed max-w-lg">
+              <p>Bridging the gap between <span className="text-white font-medium">Cloud Architecture</span> and <span className="text-white font-medium">Active Defense</span>.</p>
+              <p>Developing threat intelligence pipelines at <span className="text-brand font-bold italic">Nologin Consulting</span>.</p>
             </div>
           </div>
 
-          <div className="reveal-section grid-border-heavy p-10 flex flex-col justify-between bg-black/50">
-             <div className="flex justify-between items-start">
-                 <Shield className="w-12 h-12 text-brand" />
-                 <span className="tech-label opacity-30 tracking-[0.3em]">CERTIFICATIONS</span>
+          <div className="reveal-section p-8 lg:p-12 border border-white/10 bg-white/5 backdrop-blur-3xl relative overflow-hidden group">
+             <div className="absolute top-0 right-0 p-6 opacity-3 group-hover:opacity-15 transition-opacity">
+                <Shield size={120} aria-hidden="true" />
              </div>
-             <div className="space-y-8 mt-12">
+             <Shield className="w-10 h-10 text-brand mb-8" aria-hidden="true" />
+             <div className="space-y-6 lg:space-y-8">
                 {[
                   { title: "Microsoft Azure", meta: "AZ-104 Administrator", status: "Ongoing" },
                   { title: "Computer Engineering", meta: "4th Year Student", status: "Active" },
                   { title: "Threat Intel", meta: "Skyfall CTI Platform", status: "TFG" }
                 ].map((item, i) => (
-                  <div key={i} className="flex justify-between items-end border-b border-white/5 pb-4">
+                  <div key={i} className="flex justify-between items-end border-b border-white/5 pb-4 lg:pb-6">
                     <div>
-                        <span className="font-syne font-bold uppercase text-2xl lg:text-3xl block hover:text-brand transition-colors cursor-default">{item.title}</span>
-                        <span className="tech-label opacity-40 lowercase tracking-normal pl-0">{item.meta}</span>
+                        <span className="font-syne font-bold uppercase text-xl lg:text-2xl block group-hover:text-brand transition-colors duration-300">{item.title}</span>
+                        <span className="tech-label opacity-40 lowercase tracking-normal pl-0 text-[10px] sm:text-xs">{item.meta}</span>
                     </div>
-                    <span className="tech-label border border-brand text-brand">{item.status}</span>
+                    <span className="tech-label border border-brand text-brand py-0.5 px-2 text-[9px] sm:text-[10px]">{item.status}</span>
                   </div>
                 ))}
              </div>
           </div>
         </section>
 
-        {/* ── WORK SECTION (Fixed Mobile Clipping) ─────────────────────────── */}
-        <div id="work" className="relative z-10 overflow-visible">
+        <div id="work" className="relative z-10">
           <HorizontalWork />
         </div>
 
         {/* ── SKILLS SECTION ───────────────────────────────────────────────── */}
-        <section id="skills" className="py-[10vh] lg:py-[15vh] px-[8vw] lg:px-[5vw] bg-transparent backdrop-blur-sm relative z-10">
-          <div className="flex flex-col lg:flex-row justify-between items-end mb-16 lg:mb-20 gap-8">
-            <div>
-              <span className="tech-label text-brand font-bold pl-0">CAPABILITIES // 02</span>
-              <h2 className="headline-huge mt-4 text-[12vw] sm:text-[10vw] lg:text-9xl leading-[0.8] overflow-wrap-anywhere"><span className="italic">Tech</span><br/><span className="text-brand">Domain.</span></h2>
-            </div>
-            <div className="lg:text-right max-w-sm">
-                <p className="text-[#6b7280] font-mono text-[9px] uppercase tracking-[0.3em] leading-loose">
-                    DEPLOYING SCALABLE INFRASTRUCTURE. AUTOMATING SECURITY MONITORING. MANAGING FULL-STACK RESILIENCE.
-                </p>
-            </div>
+        <section id="skills" className="py-[10vh] lg:py-[15vh] px-[6vw] lg:px-[8vw] max-w-[1600px] mx-auto reveal-section">
+          <div className="mb-12 lg:mb-20 flex flex-col lg:flex-row justify-between items-end gap-10">
+              <div className="flex-grow">
+                <span className="tech-label text-brand font-bold pl-0 tracking-[0.4em]">CAPABILITIES // 02</span>
+                <h2 className="text-[clamp(3rem,8vw,8rem)] font-syne font-black leading-[0.8] mt-6 tracking-tighter uppercase">Tech<br/><span className="text-brand font-black">Domain.</span></h2>
+              </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[1px] bg-white/10 border border-white/10">
             {[
-              { title: "Cloud Systems", skills: ["Azure VMs", "ERP Hosting", "Blob Storage", "Terraform Config"] },
-              { title: "Cybersecurity", skills: ["SOC Automation", "TI Platforms", "EDR / SIEM", "Incident Detection"] },
-              { title: "DevOps / Infra", skills: ["n8n Workflows", "Docker", "Kubernetes", "Linux Hardening"] },
-              { title: "Languages", skills: ["Python Scripts", "TypeScript / JS", "C++ Systems", "Go Backend"] },
+              { Icon: Cloud, title: "Cloud Ops", skills: ["Azure VMs", "ERP Hosting", "Blob Storage", "Terraform IaC"] },
+              { Icon: Shield, title: "SecOps", skills: ["SOC Automation", "TI Platforms", "EDR / SIEM", "Incident Detection"] },
+              { Icon: Terminal, title: "DevOps", skills: ["n8n Workflows", "Docker Hub", "Kubernetes", "Linux Hardening"] },
+              { Icon: Activity, title: "Languages", skills: ["Python Scripts", "TypeScript / JS", "C++ Systems", "Go Backend"] },
             ].map((cat, i) => (
-              <div key={i} className="bg-black p-12 reveal-section hover:bg-brand/5 transition-colors group">
-                <h3 className="font-syne font-bold uppercase text-xl mb-8 flex items-center gap-3">
-                  <Box className="w-5 h-5 text-brand" /> {cat.title}
-                </h3>
-                <ul className="space-y-4">
+              <div key={i} className="bg-black p-10 lg:p-12 group hover:bg-white transition-all duration-700">
+                <cat.Icon className="w-8 h-8 text-brand mb-8 group-hover:scale-110 transition-transform duration-500" aria-hidden="true" />
+                <h3 className="font-syne font-bold uppercase text-xl lg:text-2xl mb-6 group-hover:text-black transition-colors">{cat.title}</h3>
+                <ul className="space-y-3">
                   {cat.skills.map(s => (
-                    <li key={s} className="flex items-center gap-3 group/li hover:translate-x-2 transition-transform">
-                      <div className="w-1 h-1 bg-brand opacity-0 group-hover/li:opacity-100" />
-                      <span className="text-sm font-mono text-[#6b7280] group-hover/li:text-white transition-colors">{s}</span>
+                    <li key={s} className="text-xs lg:text-sm font-mono text-[#6b7280] group-hover:text-black/60 flex items-center gap-2">
+                        <div className="w-1 h-1 bg-brand opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
+                        {s}
                     </li>
                   ))}
                 </ul>
@@ -366,31 +353,73 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── FOOTER (Screenshot Style) ─────────────────────────────────── */}
-        <footer id="contact" className="py-[15vh] px-[5vw] border-t border-white/10 bg-transparent relative z-10 overflow-hidden">
-          <div className="flex flex-col items-center text-center px-4 max-w-full overflow-hidden leading-none">
-             <h2 className="headline-huge text-[15vw] lg:text-[18rem] leading-[0.7] mb-12 italic opacity-10 select-none">CONTACT</h2>
-             <a href="mailto:contact@csolana.dev" className="font-syne font-black text-xl sm:text-2xl lg:text-7xl uppercase hover:text-brand transition-all duration-300 -mt-[5vw] lg:-mt-[10vw] overflow-wrap-anywhere max-w-full">
-                hire@csolana.dev
-             </a>
-             
-             <div className="mt-20 flex gap-8">
-                <a href="#" className="p-8 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
-                  <Linkedin className="w-10 h-10" />
-                </a>
-                <a href="#" className="p-8 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
-                   <Github className="w-10 h-10" />
-                </a>
-             </div>
+        {/* ── FOOTER ─────────────────────────────────── */}
+        <footer id="contact" className="py-[10vh] lg:py-[15vh] px-[6vw] border-t border-white/5 text-center reveal-section bg-black flex flex-col items-center">
+          <div className="relative w-full flex flex-col items-center max-w-[1700px] overflow-visible">
+            <span className="text-[clamp(3rem,10vw,12rem)] font-syne font-black italic opacity-5 select-none tracking-tighter leading-none mb-[-2vw] uppercase" aria-hidden="true">CONTACT</span>
+            <a href="mailto:carlossolanamelero@gmail.com" className="font-syne font-black text-xl sm:text-2xl lg:text-[clamp(1rem,3.8vw,4.5rem)] uppercase hover:text-brand transition-all duration-500 block relative z-10 group py-4 max-w-full px-4" aria-label="Send email to carlossolanamelero@gmail.com">
+               <span className="inline-block group-hover:-translate-y-full transition-transform duration-500">carlossolanamelero@gmail.com</span>
+               <span className="absolute left-0 right-0 top-full group-hover:top-0 transition-all duration-500 text-brand">GET IN TOUCH</span>
+            </a>
           </div>
           
-          <div className="mt-32 pt-10 border-t border-white/5 flex flex-col lg:flex-row justify-between items-center gap-4 opacity-30 uppercase font-mono text-[8px] tracking-[0.4em]">
-            <p>© 2026 CARLOS SOLANA — B.ENG COMPUTER SCIENCE</p>
-            <p>DESIGNED FOR AGENTIC PERFORMANCE / GSAP / NEXT.JS</p>
+          <p className="mt-8 text-[#6b7280] text-[9px] lg:text-[10px] tracking-[0.4em] uppercase font-mono">Based in Zaragoza // Available globally</p>
+          
+          <div className="mt-12 lg:mt-20 flex justify-center gap-6 lg:gap-8">
+             {[
+               { Icon: Linkedin, url: "https://linkedin.com/in/carlos-solana-melero", label: "LinkedIn Profile" },
+               { Icon: Github, url: "https://github.com/Csolanascript", label: "GitHub Profile" }
+             ].map((link, i) => (
+               <a 
+                 key={i} 
+                 href={link.url} 
+                 target="_blank" 
+                 className="p-6 lg:p-8 border border-white/5 rounded-full hover:bg-brand hover:text-black hover:border-brand transition-all duration-500 flex items-center justify-center group"
+                 aria-label={link.label}
+               >
+                 <link.Icon size={20} className="group-hover:scale-110 transition-transform" />
+               </a>
+             ))}
+          </div>
+
+          <div className="mt-[10vh] pt-10 border-t border-white/5 w-full flex flex-col lg:flex-row justify-between items-center gap-4 opacity-30 uppercase font-mono text-[8px] tracking-[0.4em]">
+            <p>© 2026 CARLOS SOLANA</p>
+            <p>DESIGNED FOR AGENTIC PERFORMANCE</p>
+            <p>VAULT_V.2.0.2.6</p>
           </div>
         </footer>
 
       </div>
+
+      <style jsx global>{`
+        @keyframes infinite-scroll {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+        .animate-infinite-scroll {
+          animation: infinite-scroll 40s linear infinite;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
     </SmoothScroll>
   );
+}
+
+function ArrowDownIcon({ className }: { className?: string }) {
+    return (
+        <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            className={className}
+        >
+            <path d="M7 13l5 5 5-5" />
+            <path d="M12 18V6" />
+        </svg>
+    );
 }
