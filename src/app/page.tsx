@@ -15,6 +15,7 @@ import {
   Activity, 
   Monitor, 
   Menu,
+  X,
   Sparkles,
 } from "lucide-react";
 
@@ -68,9 +69,9 @@ function Marquee({ text, direction = 1 }: { text: string; direction?: 1 | -1 }) 
 
 function SplitText({ text, className = "", id = "" }: { text: string; className?: string; id?: string; }) {
     return (
-      <span id={id} className={`inline-block split-parent ${className}`}>
+      <span id={id} className={`inline-block split-parent whitespace-nowrap ${className}`}>
         {text.split("").map((char, i) => (
-          <span key={i} className="char inline-block translate-y-[110%] opacity-0 blur-md hover:scale-125 hover:text-brand hover:-translate-y-2 hover:drop-shadow-[0_0_15px_rgba(var(--brand-rgb),0.5)] transition-all duration-300 cursor-default py-1">
+          <span key={i} className="char inline-block translate-y-[110%] opacity-0 blur-md lg:hover:scale-125 lg:hover:text-brand lg:hover:-translate-y-2 lg:hover:drop-shadow-[0_0_15px_rgba(var(--brand-rgb),0.5)] transition-all duration-300 cursor-default py-1">
             {char === " " ? "\u00A0" : char}
           </span>
         ))}
@@ -96,6 +97,7 @@ function NumericTicker({ text = "111000100100000101001 /////////// 1010000100111
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hasEntered, setHasEntered] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     setHasEntered(true);
@@ -200,8 +202,12 @@ export default function Home() {
           </div>
 
           <div className="flex items-stretch flex-shrink-0">
-            <button className="lg:hidden border-l border-black px-4 flex items-center justify-center text-black" aria-label="Open Menu">
-                <Menu size={18} />
+            <button 
+                className="lg:hidden border-l border-black px-4 flex items-center justify-center text-black active:scale-95 transition-transform" 
+                aria-label="Toggle Menu"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+                {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
             <a href="mailto:carlossolanamelero@gmail.com" className="hidden lg:flex px-8 items-center justify-center bg-brand text-black font-syne font-black text-xs gap-3 cursor-pointer hover:bg-white transition-colors" aria-label="Hire Carlos Solana">
                 <span>HIRE ME</span>
@@ -210,6 +216,22 @@ export default function Home() {
           </div>
         </header>
 
+        {/* Mobile Menu Overlay */}
+        <div className={`fixed inset-0 z-40 bg-brand lg:hidden transition-all duration-500 ease-expo ${isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
+            <div className="flex flex-col items-center justify-center h-full gap-8">
+                {["ABOUT", "WORK", "CONTACT"].map((link) => (
+                  <a 
+                    key={link} 
+                    href={`#${link.toLowerCase()}`}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="font-syne font-black text-5xl text-black tracking-tighter uppercase whitespace-nowrap"
+                  >
+                    {link}
+                  </a>
+                ))}
+            </div>
+        </div>
+
         {/* ── HERO SECTION ─────────────────────────── */}
         <section id="home" className="min-h-[100svh] flex flex-col pt-12 lg:pt-0 lg:justify-center relative overflow-hidden">
           
@@ -217,15 +239,12 @@ export default function Home() {
               <h1 className="sr-only">Carlos Solana - Sistemas y Ciberseguridad</h1>
 
               {/* Mobile Setup */}
-              <div className="lg:hidden flex flex-col justify-center flex-grow p-5" aria-hidden="true">
+              <div className="lg:hidden flex flex-col justify-center flex-grow p-4" aria-hidden="true">
                   <NumericTicker className="ticker-bar mb-6" />
                   <div className="bg-brand p-8 transition-colors duration-500">
-                     <div className="hero-main-title text-[clamp(2rem,12vw,4.5rem)] font-syne font-black uppercase leading-[0.8] tracking-tighter text-black flex flex-col items-center text-center">
-                        <div><SplitText text="CARLOS" /></div>
-                        <div className="flex items-center gap-2">
-                           <SplitText text="SOLANA" />
-                           <Sparkles size={20} />
-                        </div>
+                     <div className="hero-main-title text-[clamp(1.5rem,8.5vw,3.5rem)] font-syne font-black uppercase leading-[0.8] tracking-tighter text-black flex flex-col items-center text-center gap-1">
+                        <div className="whitespace-nowrap"><SplitText text="CARLOS" /></div>
+                        <div className="whitespace-nowrap"><SplitText text="SOLANA" /></div>
                      </div>
                   </div>
                   <NumericTicker className="ticker-bar mt-6 bg-brand text-black" text="VAULT_V.2.0.2.6 // AZURE_SEC // THREAT_INTEL" />
@@ -271,7 +290,7 @@ export default function Home() {
                      key={i} 
                      href={social.url} 
                      target="_blank"
-                     className="p-3 lg:p-5 border border-white/10 hover:bg-brand hover:text-black hover:border-brand transition-all duration-500 rounded-sm"
+                     className="p-3 lg:p-5 border border-white/10 lg:hover:bg-brand lg:hover:text-black lg:hover:border-brand transition-all duration-500 rounded-sm"
                      aria-label={social.label}
                    >
                      <social.Icon size={18} />
@@ -357,7 +376,7 @@ export default function Home() {
         <footer id="contact" className="py-[10vh] lg:py-[15vh] px-[6vw] border-t border-white/5 text-center reveal-section bg-black flex flex-col items-center">
           <div className="relative w-full flex flex-col items-center max-w-[1700px] overflow-visible">
             <span className="text-[clamp(3rem,10vw,12rem)] font-syne font-black italic opacity-5 select-none tracking-tighter leading-none mb-[-2vw] uppercase" aria-hidden="true">CONTACT</span>
-            <a href="mailto:carlossolanamelero@gmail.com" className="font-syne font-black text-xl sm:text-2xl lg:text-[clamp(1rem,3.8vw,4.5rem)] uppercase hover:text-brand transition-all duration-500 block relative z-10 group py-4 max-w-full px-4" aria-label="Send email to carlossolanamelero@gmail.com">
+            <a href="mailto:carlossolanamelero@gmail.com" className="font-syne font-black text-[clamp(0.5rem,2.9vw,4.5rem)] uppercase lg:hover:text-brand transition-all duration-500 block relative z-10 group py-4 max-w-[95vw] px-4 break-keep whitespace-nowrap overflow-visible" aria-label="Send email to carlossolanamelero@gmail.com">
                <span className="inline-block group-hover:-translate-y-full transition-transform duration-500">carlossolanamelero@gmail.com</span>
                <span className="absolute left-0 right-0 top-full group-hover:top-0 transition-all duration-500 text-brand">GET IN TOUCH</span>
             </a>
@@ -374,7 +393,7 @@ export default function Home() {
                  key={i} 
                  href={link.url} 
                  target="_blank" 
-                 className="p-6 lg:p-8 border border-white/5 rounded-full hover:bg-brand hover:text-black hover:border-brand transition-all duration-500 flex items-center justify-center group"
+                 className="p-6 lg:p-8 border border-white/5 rounded-full lg:hover:bg-brand lg:hover:text-black lg:hover:border-brand transition-all duration-500 flex items-center justify-center group"
                  aria-label={link.label}
                >
                  <link.Icon size={20} className="group-hover:scale-110 transition-transform" />
@@ -401,6 +420,7 @@ export default function Home() {
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .ease-expo { transition-timing-function: cubic-bezier(1, 0, 0, 1); }
       `}</style>
     </SmoothScroll>
   );

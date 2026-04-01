@@ -106,14 +106,14 @@ export default function HorizontalWork() {
         {/* Intro Slide */}
         <div className="flex-shrink-0 lg:w-[50vw] flex flex-col justify-center mb-8 lg:mb-0">
             <span className="tech-label pl-0">SELECTED WORKS // 01</span>
-            <h2 className="headline-huge mt-4 mb-6 lg:mb-10 text-[clamp(2rem,7vw,7rem)] tracking-tighter leading-[0.9] uppercase font-syne font-black">Selected<br/><span className="text-brand">Experience</span></h2>
+            <h2 className="headline-huge mt-4 mb-6 lg:mb-10 text-[clamp(1.5rem,4.5vw,5rem)] tracking-tighter leading-[0.9] uppercase font-syne font-black lg:whitespace-nowrap lg:break-keep">Selected<br/><span className="text-brand">Experience</span></h2>
         </div>
 
         {/* Project Cards */}
         {PROJECTS.map((project, index) => (
           <div 
             key={project.id} 
-            className="project-card flex-shrink-0 w-full lg:w-[40vw] lg:h-[60vh] grid-border-heavy p-6 lg:p-8 flex flex-col justify-between group transition-colors duration-500 hover:bg-[#ff0033]/5 relative lg:overflow-hidden"
+            className="project-card flex-shrink-0 w-full lg:w-[40vw] lg:h-[60vh] grid-border-heavy p-4 lg:p-8 flex flex-col justify-between group transition-colors duration-500 hover:bg-[#ff0033]/5 relative lg:overflow-hidden"
           >
             {/* Background ID number (Desktop) */}
             <div className="absolute -right-10 -bottom-10 opacity-[0.03] font-syne text-[15rem] lg:text-[20rem] font-black select-none pointer-events-none transition-opacity duration-500 group-hover:opacity-[0.08] hidden sm:block">
@@ -123,7 +123,7 @@ export default function HorizontalWork() {
             <div className="flex justify-between items-start mb-6 lg:mb-0">
               <div>
                 <span className="tech-label mb-4 block opacity-50 px-0">{project.id}</span>
-                <h3 className="font-syne text-xl sm:text-4xl lg:text-5xl font-extrabold uppercase mb-2 group-hover:text-brand transition-colors overflow-wrap-anywhere">{project.title}</h3>
+                <h3 className="font-syne text-xl sm:text-4xl lg:text-5xl font-extrabold uppercase mb-2 group-hover:text-brand transition-colors lg:whitespace-nowrap lg:break-keep">{project.title}</h3>
                 <p className="text-brand font-mono text-[10px] lg:text-sm tracking-widest">{project.subtitle}</p>
               </div>
               <div className="lg:block">

@@ -51,8 +51,8 @@ body {
   /* ── Headlines ─────────────────────────────────────────────────── */
   .headline-huge {
     @apply font-syne font-extrabold uppercase leading-[0.82] tracking-tighter overflow-wrap-anywhere;
-    /* Mobile-first: start small, scale up. Lowered min to 2.4rem for ~320px screens */
-    font-size: clamp(2.4rem, 16vw, 13rem);
+    /* Ultra-Safe for 320px screens: 1.2rem min, 8.2vw scale max */
+    font-size: clamp(1.2rem, 8.2vw, 12rem);
   }
 
   .headline-reveal {
