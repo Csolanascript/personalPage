@@ -106,7 +106,7 @@ export default function HorizontalWork() {
         {/* Intro Slide */}
         <div className="flex-shrink-0 lg:w-[50vw] flex flex-col justify-center mb-8 lg:mb-0">
             <span className="tech-label pl-0">SELECTED WORKS // 01</span>
-            <h2 className="headline-huge mt-4 mb-6 lg:mb-10 text-[clamp(1.5rem,4.5vw,5rem)] tracking-tighter leading-[0.9] uppercase font-syne font-black lg:whitespace-nowrap lg:break-keep">Selected<br/><span className="text-brand">Experience</span></h2>
+            <h2 className="headline-huge mt-4 mb-6 lg:mb-10 text-[clamp(1.2rem,7.8vw,5rem)] tracking-tighter leading-[0.9] uppercase font-syne font-black whitespace-nowrap break-keep">Selected<br/><span className="text-brand">Experience</span></h2>
         </div>
 
         {/* Project Cards */}

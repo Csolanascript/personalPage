@@ -376,7 +376,7 @@ export default function Home() {
         <footer id="contact" className="py-[10vh] lg:py-[15vh] px-[6vw] border-t border-white/5 text-center reveal-section bg-black flex flex-col items-center">
           <div className="relative w-full flex flex-col items-center max-w-[1700px] overflow-visible">
             <span className="text-[clamp(3rem,10vw,12rem)] font-syne font-black italic opacity-5 select-none tracking-tighter leading-none mb-[-2vw] uppercase" aria-hidden="true">CONTACT</span>
-            <a href="mailto:carlossolanamelero@gmail.com" className="font-syne font-black text-[clamp(0.5rem,2.9vw,4.5rem)] uppercase lg:hover:text-brand transition-all duration-500 block relative z-10 group py-4 max-w-[95vw] px-4 break-keep whitespace-nowrap overflow-visible" aria-label="Send email to carlossolanamelero@gmail.com">
+            <a href="mailto:carlossolanamelero@gmail.com" className="font-syne font-black text-[clamp(0.5rem,2.7vw,4.5rem)] tracking-tighter uppercase lg:hover:text-brand transition-all duration-500 block relative z-10 group py-4 max-w-[95vw] px-4 break-keep whitespace-nowrap overflow-visible" aria-label="Send email to carlossolanamelero@gmail.com">
                <span className="inline-block group-hover:-translate-y-full transition-transform duration-500">carlossolanamelero@gmail.com</span>
                <span className="absolute left-0 right-0 top-full group-hover:top-0 transition-all duration-500 text-brand">GET IN TOUCH</span>
             </a>
