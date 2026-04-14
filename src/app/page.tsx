@@ -236,7 +236,7 @@ export default function Home() {
         <section id="home" className="min-h-[100svh] flex flex-col pt-12 lg:pt-0 lg:justify-center relative overflow-hidden">
           
           <div className="flex-grow flex flex-col justify-center max-w-full">
-              <h1 className="sr-only">Carlos Solana - Sistemas y Ciberseguridad</h1>
+              <h1 className="sr-only">Carlos Solana</h1>
 
               {/* Mobile Setup */}
               <div className="lg:hidden flex flex-col justify-center flex-grow p-4" aria-hidden="true">
@@ -308,32 +308,38 @@ export default function Home() {
             <span className="tech-label text-brand font-bold pl-0 tracking-[0.4em]">PROFILE // 00</span>
             <h2 className="font-syne text-[clamp(2rem,6vw,4.5rem)] font-black uppercase mt-6 mb-8 leading-[0.85]">Hybrid<br/><span className="italic text-brand lg:text-white">Systems.</span></h2>
             <div className="space-y-6 text-[#9ca3af] text-lg lg:text-xl font-light leading-relaxed max-w-lg">
-              <p>Bridging the gap between <span className="text-white font-medium">Cloud Architecture</span> and <span className="text-white font-medium">Active Defense</span>.</p>
-              <p>Developing threat intelligence pipelines at <span className="text-brand font-bold italic">Nologin Consulting</span>.</p>
+              <p>Hola, soy <span className="text-white font-bold">Carlos Solana</span>. Bridging the gap between <span className="text-white font-medium">Cloud Architecture</span> and <span className="text-white font-medium">Active Defense</span>.</p>
+              <p>Developing threat intelligence pipelines at <span className="text-brand font-bold italic">Nologin Consulting</span>, focusing on automating security operations and enhancing incident response.</p>
             </div>
           </div>
 
-          <div className="reveal-section p-8 lg:p-12 border border-white/10 bg-white/5 backdrop-blur-3xl relative overflow-hidden group">
-             <div className="absolute top-0 right-0 p-6 opacity-3 group-hover:opacity-15 transition-opacity">
-                <Shield size={120} aria-hidden="true" />
+          <div className="reveal-section p-0 border border-white/10 bg-white/5 backdrop-blur-3xl relative overflow-hidden group rounded-sm min-h-[400px]">
+             <div className="absolute inset-0 opacity-40 group-hover:opacity-100 transition-all duration-700 bg-black">
+                <img 
+                    src="/carlos-solana.jpg" 
+                    alt="Carlos Solana Profile" 
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100"
+                />
              </div>
-             <Shield className="w-10 h-10 text-brand mb-8" aria-hidden="true" />
-             <div className="space-y-6 lg:space-y-8">
-                {[
-                  { title: "Microsoft Azure", meta: "AZ-104 Administrator", status: "Ongoing" },
-                  { title: "Computer Engineering", meta: "4th Year Student", status: "Active" },
-                  { title: "Threat Intel", meta: "Skyfall CTI Platform", status: "TFG" }
-                ].map((item, i) => (
-                  <div key={i} className="flex justify-between items-end border-b border-white/5 pb-4 lg:pb-6">
-                    <div>
-                        <span className="font-syne font-bold uppercase text-xl lg:text-2xl block group-hover:text-brand transition-colors duration-300">{item.title}</span>
-                        <span className="tech-label opacity-40 lowercase tracking-normal pl-0 text-[10px] sm:text-xs">{item.meta}</span>
-                    </div>
-                    <span className="tech-label border border-brand text-brand py-0.5 px-2 text-[9px] sm:text-[10px]">{item.status}</span>
-                  </div>
-                ))}
-             </div>
-          </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent flex flex-col justify-end p-8 lg:p-12">
+                 <Shield className="w-10 h-10 text-brand mb-4" aria-hidden="true" />
+                 <div className="space-y-6 lg:space-y-8">
+                    {[
+                      { title: "Microsoft Azure", meta: "AZ-104 Administrator", status: "Ongoing" },
+                      { title: "Computer Engineering", meta: "4th Year Student", status: "Active" },
+                      { title: "Threat Intel", meta: "Skyfall CTI Platform", status: "TFG" }
+                    ].map((item, i) => (
+                      <div key={i} className="flex justify-between items-end border-b border-white/5 pb-4 lg:pb-6">
+                        <div>
+                            <span className="font-syne font-bold uppercase text-xl lg:text-2xl block group-hover:text-brand transition-colors duration-300">{item.title}</span>
+                            <span className="tech-label opacity-40 lowercase tracking-normal pl-0 text-[10px] sm:text-xs">{item.meta}</span>
+                        </div>
+                        <span className="tech-label border border-brand text-brand py-0.5 px-2 text-[9px] sm:text-[10px]">{item.status}</span>
+                      </div>
+                    ))}
+                 </div>
+              </div>
+           </div>
         </section>
 
         <div id="work" className="relative z-10">

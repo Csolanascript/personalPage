@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Carlos Solana | Sistemas y Ciberseguridad",
+  title: "Carlos Solana | Sistemas, Ciberseguridad y SOC Analyst",
   description: 
-    "Web personal de Carlos Solana. Proyectos de ciberseguridad, SOC analyst, Cloud Azure y automatización. Portfolio y contacto.",
+    "Web oficial de Carlos Solana. Descubre mis proyectos de ciberseguridad, trayectoria como SOC Analyst, implementaciones en Azure Cloud y automatización. Especialista en defensa activa y Threat Intelligence.",
   keywords: [
     "Carlos Solana",
     "ciberseguridad",
@@ -17,13 +17,13 @@ export const metadata: Metadata = {
     "OpenCTI",
     "Intel Owl",
     "Nologin Consulting",
-    "portfolio desarrollador",
+    "CS Solana",
   ],
   authors: [{ name: "Carlos Solana" }],
   openGraph: {
     title: "Carlos Solana | Sistemas y Ciberseguridad",
     description: 
-      "Web personal de Carlos Solana. Proyectos, portfolio y contacto en ciberseguridad y servicios cloud.",
+      "Web oficial de Carlos Solana. Especialista en SOC, Azure y Ciberseguridad. Proyectos, portfolio y contacto.",
     url: "https://carlossolana.hispandle.es",
     siteName: "Carlos Solana Portfolio",
     type: "website",
@@ -48,8 +48,15 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Carlos Solana",
-    "url": "https://carlossolana.hispandle.es",
     "jobTitle": "Systems Engineer & SOC Analyst",
+    "url": "https://carlossolana.hispandle.es",
+    "description": "Especialista en Ciberseguridad y Sistemas, enfocado en SOC Automation, Azure Cloud y Threat Intelligence.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Zaragoza",
+      "addressCountry": "ES"
+    },
+    "image": "https://carlossolana.hispandle.es/carlos-solana.jpg",
     "sameAs": [
       "https://github.com/Csolanascript",
       "https://linkedin.com/in/carlos-solana-melero"
